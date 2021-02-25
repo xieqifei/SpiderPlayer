@@ -227,7 +227,7 @@
 
   //切换到播放列表
   function showPlayList() {
-    var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-l-1  mdui-p-r-1 mdui-center">操作</th></tr>';
+    var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-l-1  mdui-p-r-1 mdui-text-center" style="width:130px">操作</th></tr>';
     $("#tbhead").empty();
     $("#tbhead").append(tbhead);
     var str = "";
@@ -284,12 +284,12 @@
     for (var i = 0; i < favoritelist.length; i++) {
       var music = favoritelist[i];
       var btn_play='<button onclick="play(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'播放\'}"><i class="mdui-icon material-icons">&#xe039;</i></button>';
-      var btn_addnext = '<button onclick="addnext(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'添加到列表\'}"><i class="mdui-icon material-icons">&#xe145;</i></button>';
-      var btn_dislike = '<button onclick="deleteFavorite(this.id);showFavorite();" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'收藏\'}"><i class="mdui-icon material-icons">&#xe872;</i></button>';
+      var btn_share = '<button onclick="copyShareLink(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'分享\'}"><i class="mdui-icon material-icons">share</i></button>';
+      var btn_dislike = '<button onclick="deleteFavorite(this.id);" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'收藏\'}"><i class="mdui-icon material-icons">&#xe872;</i></button>';
       str += '<tr id=music' + music.bv + '>';
       str += '<td ">' + (i + 1) + '</td>';
       str += '<td class="mdui-p-a-1">' + music.name + '</td>';
-      str += '<td class="mdui-p-a-0">' + btn_play+btn_addnext+btn_dislike+ '</td>';
+      str += '<td class="mdui-p-a-0">' + btn_play+btn_share+btn_dislike+ '</td>';
       str += '</tr>';
     }
     $("#tbbody").empty();
@@ -298,15 +298,29 @@
   }
   //删除收藏音乐
   function deleteFavorite(bv) {
-    var favoritelist = localStorage.getItem("favoritelist") ? JSON.parse(localStorage.getItem("favoritelist")) : [];
-    console.log(bv)
-    for (var i = 0; i < favoritelist.length; i++) {
-      if (favoritelist[i].bv == bv) {
-        favoritelist.splice(i, 1);
-        break;
-      }
-    }
-    localStorage.setItem("favoritelist", JSON.stringify(favoritelist));
+    mdui.dialog({
+      title: '确定要删除吗？',
+      buttons: [
+        {
+          text: '取消'
+        },
+        {
+          text: '确认',
+          onClick: function(inst){
+            var favoritelist = localStorage.getItem("favoritelist") ? JSON.parse(localStorage.getItem("favoritelist")) : [];
+            for (var i = 0; i < favoritelist.length; i++) {
+              if (favoritelist[i].bv == bv) {
+                favoritelist.splice(i, 1);
+                break;
+              }
+            }
+            localStorage.setItem("favoritelist", JSON.stringify(favoritelist));
+            showFavorite();
+          }
+        }
+      ]
+    });
+    
   }
 
   /***************/
@@ -334,6 +348,12 @@
     return(false);
   }
 
+  //拷贝分享链接到剪切板
+  function copyShareLink(bv){
+    var url = location.href.split("?")[0]+"?bv="+bv;
+    copyToClip(url);
+  } 
+
 //拷贝指定内容到剪切板
 function copyToClip(content, msg) {
     var aux = document.createElement("input"); 
@@ -343,10 +363,7 @@ function copyToClip(content, msg) {
     document.execCommand("copy"); 
     document.body.removeChild(aux);
     if (msg == null) {
-      mdui.snackbar({
-        message: '分享链接已复制到剪切板'
-      });
-
+      mdui.alert("已复制到剪切板");
     } else{
       mdui.snackbar({
         message: msg
