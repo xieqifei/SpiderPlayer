@@ -276,7 +276,7 @@
     var btn_playall = '<button onclick="playFavorite()"  class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'播放全部\'}"><i class="mdui-icon material-icons">playlist_play</i></button>';
     var btn_update = '<button onclick="updateFavorite()"  class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'更新歌单\'}"><i class="mdui-icon material-icons">cloud_upload</i></button>';
     var btn_download =  '<button onclick="dlFavorite()"  class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'下载歌单\'}"><i class="mdui-icon material-icons">cloud_download</i></button>';
-    var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-a-0">'+btn_playall+btn_update+btn_download+'</th></tr>';
+    var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-l-1  mdui-p-r-1">'+btn_playall+btn_update+btn_download+'</th></tr>';
     $("#tbhead").empty();
     $("#tbhead").append(tbhead);
     var favoritelist = localStorage.getItem("favoritelist") ? JSON.parse(localStorage.getItem("favoritelist")) : [];
@@ -289,7 +289,7 @@
       str += '<tr id=music' + music.bv + '>';
       str += '<td ">' + (i + 1) + '</td>';
       str += '<td class="mdui-p-a-1">' + music.name + '</td>';
-      str += '<td class="mdui-p-a-0">' + btn_play+btn_share+btn_dislike+ '</td>';
+      str += '<td class="mdui-p-l-1  mdui-p-r-1">' + btn_play+btn_share+btn_dislike+ '</td>';
       str += '</tr>';
     }
     $("#tbbody").empty();
