@@ -227,7 +227,7 @@
 
   //切换到播放列表
   function showPlayList() {
-    var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-a-1 mdui-center">操作</th></tr>';
+    var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-l-1  mdui-p-r-1 mdui-center">操作</th></tr>';
     $("#tbhead").empty();
     $("#tbhead").append(tbhead);
     var str = "";
@@ -239,7 +239,7 @@
       str += '<tr id=music' + i + '>';
       str += '<td>' + (i + 1) + '</td>';
       str += '<td class="mdui-p-a-1">' + music.name + '</td>';
-      str += '<td class="mdui-p-a-1">' + btn_play+btn_delete+btn_like + '</td>';
+      str += '<td class="mdui-p-l-1  mdui-p-r-1">' + btn_play+btn_delete+btn_like + '</td>';
       str += '</tr>';
     }
     $("#tbbody").empty();
