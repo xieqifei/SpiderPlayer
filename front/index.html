@@ -143,9 +143,9 @@
     for (var i = 0; i < musiclist.length; i++) {
       var music = musiclist[i];
      
-      var btn_play = '<button onclick="play(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe039;</i></button>';
-      var btn_addnext = '<button onclick="addnext(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe145;</i></button>';
-      var btn_like = '<button onclick="addFavorite(this.name,this.id)" name="' + music.name + '" id=' + music.bv + ' class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe87e;</i></button>';
+      var btn_play = '<button onclick="play(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'播放\'}"><i class="mdui-icon material-icons">&#xe039;</i></button>';
+      var btn_addnext = '<button onclick="addnext(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'添加到播放列表\'}"><i class="mdui-icon material-icons">&#xe145;</i></button>';
+      var btn_like = '<button onclick="addFavorite(this.name,this.id)" name="' + music.name + '" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'收藏\'}"><i class="mdui-icon material-icons">&#xe87e;</i></button>';
       str += '<tr id=music' + music.bv + '>';
       str += '<td>' + (i + 1) + '</td>';
       str += '<td class="mdui-p-a-1">' + music.name + '</td>';
@@ -233,9 +233,9 @@
     var str = "";
     for (var i = 0; i < ap.list.audios.length; i++) {
       var music = ap.list.audios[i];
-      var btn_play = '<button onclick="{ap.list.switch(' + i + ');}" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe039;</i></button>';
-      var btn_delete = '<button onclick="{ap.list.remove(' + i + ');showPlayList();}"  class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe872;</i></button>';
-      var btn_like = '<button onclick="addFavorite(this.name,getBVformName(this.name))" name="' + music.name + '"  class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe87e;</i></button>';
+      var btn_play = '<button onclick="{ap.list.switch(' + i + ');}" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'播放\'}"><i class="mdui-icon material-icons">&#xe039;</i></button>';
+      var btn_delete = '<button onclick="{ap.list.remove(' + i + ');showPlayList();}"  class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'删除\'}"><i class="mdui-icon material-icons">&#xe872;</i></button>';
+      var btn_like = '<button onclick="addFavorite(this.name,getBVformName(this.name))" name="' + music.name + '"  class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'收藏\'}"><i class="mdui-icon material-icons">&#xe87e;</i></button>';
       str += '<tr id=music' + i + '>';
       str += '<td>' + (i + 1) + '</td>';
       str += '<td class="mdui-p-a-1">' + music.name + '</td>';
@@ -283,9 +283,9 @@
     var str = "";
     for (var i = 0; i < favoritelist.length; i++) {
       var music = favoritelist[i];
-      var btn_play='<button onclick="play(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe039;</i></button>';
-      var btn_addnext = '<button onclick="addnext(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe145;</i></button>';
-      var btn_dislike = '<button onclick="deleteFavorite(this.id);showFavorite();" id=' + music.bv + ' class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe872;</i></button>';
+      var btn_play='<button onclick="play(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'播放\'}"><i class="mdui-icon material-icons">&#xe039;</i></button>';
+      var btn_addnext = '<button onclick="addnext(this.id)" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'添加到列表\'}"><i class="mdui-icon material-icons">&#xe145;</i></button>';
+      var btn_dislike = '<button onclick="deleteFavorite(this.id);showFavorite();" id=' + music.bv + ' class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: \'收藏\'}"><i class="mdui-icon material-icons">&#xe872;</i></button>';
       str += '<tr id=music' + music.bv + '>';
       str += '<td ">' + (i + 1) + '</td>';
       str += '<td class="mdui-p-a-1">' + music.name + '</td>';
