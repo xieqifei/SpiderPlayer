@@ -12,6 +12,9 @@ from bs4 import BeautifulSoup
 import re
 import json
 from urllib.parse import urlparse
+import base64
+from io import BytesIO
+import os
 
 def main_handler(event,context):
     if('kw' in event['queryString']):
@@ -52,11 +55,21 @@ class Music:
         rep = requests.get(self.videourl)
         if (rep.status_code ==200):
             reg = r"audio.*baseUrl\":\"(.*?)\".*backupUrl"
-            reg_result  =re.findall(reg,rep.text)
-            self.url = reg_result[0] if len(reg_result)  else ""
+            reg_url  =re.findall(reg,rep.text)
+            self.url = reg_url[0] if len(reg_url)  else ""
+            reg_cover = re.findall(r'"face":"(.*?)"},"stat":{"aid"',rep.text)
+            cover=(reg_cover[0] if len(reg_cover) else "").encode("utf-8").decode("unicode_escape")
+            self.cover = self._getImgtoBase64(cover)
+            reg_artist = re.findall(r'"name":"(.*?)","face":"',rep.text)
+            self.artist = reg_artist[0] if len(reg_artist) else ""
             soup = BeautifulSoup(rep.text,"html.parser")
             self.name = soup.select("#viewbox_report > h1 > span")[0].string
-        
+    
+    def _getImgtoBase64(self,img_url):
+        resp = requests.get(img_url)
+        img_bytes=base64.b64encode(BytesIO(resp.content).read())
+        img_str = img_bytes.decode()
+        return 'data:image/'+os.path.basename(img_url)+';base64,'+img_str
 
 class SerchResult:
     def __init__(self, keyword:str) -> None:
@@ -83,6 +96,4 @@ class SerchResult:
             return videos
         else:
             return []
-
-
 

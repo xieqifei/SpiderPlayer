@@ -4,6 +4,7 @@
 
   <link rel="shortcut icon" href="https://qn.xieqifei.com/bitbug_favicon.ico" />
   <meta name="viewport" content="width=device-width">
+  <meta name="referrer" content="no-referrer" />
   <meta charset="utf-8" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css"
     integrity="sha384-cLRrMq39HOZdvE0j6yBojO4+1PrHfB7a9l5qLcmRm/fiWXYY+CndJPmyu5FV/9Tw" crossorigin="anonymous" />
@@ -159,7 +160,7 @@
   }
 
 
-  // 从搜索列表播放音乐
+  // 通过bv请求音乐直链并播放
   function play(bv) {
     $("#progress").show();
     $.ajax({
@@ -176,7 +177,7 @@
         ap.list.switch(ap.list.audios.length - 1);
       },
       error: function (xhr, status, error) {
-        window.alert(error);
+        window.alert("播放失败，请尝试其他搜索结果");
       }
     });
   }
@@ -259,6 +260,8 @@
     }
     return 0;
   }
+
+
 
   /***************/
   //收藏功能集合
