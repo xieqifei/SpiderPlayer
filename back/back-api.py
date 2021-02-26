@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 import base64
 from io import BytesIO
 import os
+import datetime
 
 def main_handler(event,context):
     if('kw' in event['queryString']):
@@ -111,10 +112,14 @@ class Recommendation:
         self.videos =self._getRecVideos()
 
     def _getRecVideos(self):
-        url = 'https://api.bilibili.com/x/web-interface/ranking/tag?jsonp=jsonp&rid=193&tag_id=614097'
+        # url = 'https://api.bilibili.com/x/web-interface/ranking/tag?jsonp=jsonp&rid=193&tag_id=614097'
+        today=datetime.date.today()
+        formatted_today=today.strftime('%Y%m%d')
+        before30days = (datetime.date.today() + datetime.timedelta(days=-30)).strftime('%Y%m%d')
+        url = "https://s.search.bilibili.com/cate/search?main_ver=v3&search_type=video&view_type=hot_rank&order=click&copy_right=-1&cate_id=193&page=1&pagesize=20&jsonp=jsonp&time_from="+before30days+"&time_to="+formatted_today+"&keyword=%E5%8D%8E%E8%AF%ADMV"
         rep = requests.get(url)
         if(rep.status_code==200):
-            data = rep.json()['data']
+            data = rep.json()['result']
             videos=[]
             video = {}
             for i in range(len(data)):
@@ -129,3 +134,4 @@ class Recommendation:
     #秒转分秒
     def _sec2MinSec(self,sec):
         return str(int(sec)//60)+':'+(str(int(sec)%60 if(int(sec)%60>=10) else '0'+str(int(sec)%60)))
+
