@@ -34,6 +34,15 @@ def main_handler(event,context):
         "headers": {'Content-Type': 'application/json','Access-Control-Allow-Origin':'*'},
         "body": '{"url":"'+music.url+'","name":"'+music.name+'","cover":"'+music.cover+'","artist":"'+music.artist+'"}'
         }
+    elif ('rc' in event['queryString'] ):
+        videos = Recommendation().videos
+        videosjson = json.dumps(videos)
+        return {
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "headers": {'Content-Type': 'application/json','Access-Control-Allow-Origin':'*'},
+        "body": videosjson
+        }
     else:
         return {
         "isBase64Encoded": False,
@@ -97,3 +106,26 @@ class SerchResult:
         else:
             return []
 
+class Recommendation:
+    def __init__(self) -> None:
+        self.videos =self._getRecVideos()
+
+    def _getRecVideos(self):
+        url = 'https://api.bilibili.com/x/web-interface/ranking/tag?jsonp=jsonp&rid=193&tag_id=614097'
+        rep = requests.get(url)
+        if(rep.status_code==200):
+            data = rep.json()['data']
+            videos=[]
+            video = {}
+            for i in range(len(data)):
+                video['name']=data[i]['title']
+                video['duration']=self._sec2MinSec(data[i]['duration'])
+                video['bv'] = data[i]['bvid']
+                videos.append(video.copy())
+            return videos
+        else:
+            return 0
+
+    #秒转分秒
+    def _sec2MinSec(self,sec):
+        return str(int(sec)//60)+':'+(str(int(sec)%60 if(int(sec)%60>=10) else '0'+str(int(sec)%60)))
