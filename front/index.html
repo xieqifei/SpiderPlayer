@@ -238,13 +238,6 @@
   //播放功能集合
   /***************/
 
-  //播放收藏
-  function playFavorite() {
-    var favoritelist = localStorage.getItem("favoritelist") ? JSON.parse(localStorage.getItem("favoritelist")) : [];
-    playPlaylist(favoritelist);
-    ap.play()
-  }
-
   //播放一个指定列表
   function playPlaylist(playlist) {
     $("#progress").show();
@@ -276,6 +269,9 @@
         localStorage.setItem("playlist", JSON.stringify(playlist));
         $("#progress").hide();
         ap.play();
+        if($("#path").html()=='播放列表'){
+        showPlayList();
+      }
       },
       error: function (xhr, status, error) {
         window.alert(error);
@@ -290,7 +286,7 @@
           position: 'top'
         });
   }
-  //切换到播放列表
+  //展示播放列表
   function showPlayList() {
     var tbhead = '<tr><th>#</th><th class="mdui-p-a-1">歌曲标题</th><th class="mdui-p-l-1  mdui-p-r-1 mdui-text-center" style="width:130px">操作</th></tr>';
     $("#tbhead").empty();
@@ -376,6 +372,14 @@
     $("#tbbody").append(str);
     $("#path").html("我的收藏");
   }
+
+  //播放收藏
+  function playFavorite() {
+    var favoritelist = localStorage.getItem("favoritelist") ? JSON.parse(localStorage.getItem("favoritelist")) : [];
+    playPlaylist(favoritelist);
+    ap.play()
+  }
+
   //删除收藏音乐
   function deleteFavorite(bv) {
     mdui.dialog({
