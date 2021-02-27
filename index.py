@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 '''
-@file_name    :back-api.py
-@description  :
-@time         :2021/02/24 18:38:35
+@file_name    :player.py
+@description  :云函数入口程序，带参数时作为api服务器，不带参数或参数错误时，返回html网页
+@time         :2021/02/25 01:15:48
 @author       :Qifei
 @version      :1.0
 '''
-
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -16,6 +15,7 @@ import base64
 from io import BytesIO
 import os
 import datetime
+
 
 def main_handler(event,context):
     if('kw' in event['queryString']):
@@ -45,13 +45,16 @@ def main_handler(event,context):
         "body": videosjson
         }
     else:
+        with open('./index.html') as f:
+            html = f.read()
         return {
         "isBase64Encoded": False,
-        "statusCode": 404,
-        "headers": {'Content-Type': 'application/json','Access-Control-Allow-Origin':'*'},
-        "body": "{'msg':'query incorrect'}"
+        "statusCode": 200,
+        "headers": {'Content-Type': 'text/html','Access-Control-Allow-Origin':'*'},
+        "body": html
         }
-
+    
+#音乐类
 class Music:
     def __init__(self, bv:str):
         self.videourl = "https://www.bilibili.com/video/"+bv
@@ -81,6 +84,7 @@ class Music:
         img_str = img_bytes.decode()
         return 'data:image/'+os.path.basename(img_url)+';base64,'+img_str
 
+#搜索结果类，新建对象时传入搜索关键词，搜索结果在videos里
 class SerchResult:
     def __init__(self, keyword:str) -> None:
         self.keyword = keyword
@@ -107,6 +111,7 @@ class SerchResult:
         else:
             return []
 
+#首页的推荐列表
 class Recommendation:
     def __init__(self) -> None:
         self.videos =self._getRecVideos()

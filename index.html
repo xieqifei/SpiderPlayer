@@ -87,8 +87,8 @@
   // $(function() {
   //   $( "#tbody" ).sortable().disableSelection();
   // });
-  //请修改为自己的后端api
-  var baseUrl = "https://service-ife10uoc-1258461674.hk.apigw.tencentcs.com/release/music-api";
+
+  var baseUrl = location.protocol+"//"+location.host+location.pathname;
 
   //Aplayer对象
   const ap = new APlayer({
