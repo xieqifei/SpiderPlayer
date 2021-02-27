@@ -38,17 +38,23 @@ demo：https://y.sci.ci
 
 ![屏幕截图 2021-02-27 123414](https://i.loli.net/2021/02/27/fuDKBPWAFjYSZtX.png)
 
-2. 你需要一个腾讯云账号。登录后，新建一个腾讯scf云函数。了解云函数https://cloud.tencent.com/product/scf
-3. 自定义创建，函数名称随意，地域最好选择中国香港，国内的话添加自定义可能需要域名备案。如果直接使用函数提供的api就无所谓了。
+2. 解压文件。如果你想修改网站名称和标题，打开`index.html`搜索`SpiderPlayer`。一共两处，修改为你喜欢的名称就可以了。
+3. 选中全部文件，重新压缩为zip格式。⭐即使你不修改`index,html`也必须先解压，再选中全部文件重新压缩。
+
+![image-20210227134133413](https://i.loli.net/2021/02/27/aVIjhNsvw7EdnCK.png)
+
+3. 你需要一个腾讯云账号。登录后，新建一个腾讯scf云函数。了解云函数https://cloud.tencent.com/product/scf
+4. 自定义创建，函数名称随意，地域最好选择中国香港，国内的话添加自定义可能需要域名备案。如果直接使用函数提供的api就无所谓了。
 
 ![image-20210227124111666](https://i.loli.net/2021/02/27/KafqnWOzxMRkp1v.png)
 
-4. 函数代码里点击`本地上传zip`，然后点击上传，将步骤1中下载的zip文件传入。
-5. 触发器配置选择自定义创建。触发方式，选择`api网关`
+5. 函数代码里点击`本地上传zip`，然后点击上传，将步骤1中下载的zip文件传入。
+
+6. 触发器配置选择自定义创建。触发方式，选择`api网关`
 
 ![image-20210227124323892](https://i.loli.net/2021/02/27/9lDrgchtbpvdUmL.png)
 
-6. 点击`完成`并在`触发管理`中找到访问路径
+7. 点击`完成`并在`触发管理`中找到访问路径
 
 ![image-20210227124511208](https://i.loli.net/2021/02/27/d39vhuLeEbWVySp.png)
 
