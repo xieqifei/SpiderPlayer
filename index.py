@@ -221,8 +221,7 @@ class Response:
         return {
             "isBase64Encoded": False,
             "statusCode": 400,
-            "headers": {'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'},
+            "headers": {'Content-Type': 'application/json'},
             "body": '{"error":1,"msg":"'+msg+'}'
         }
 
@@ -230,8 +229,7 @@ class Response:
         return {
             "isBase64Encoded": False,
             "statusCode": 200,
-            "headers": {'Content-Type': 'text/html',
-                        'Access-Control-Allow-Origin': '*'},
+            "headers": {'Content-Type': 'text/html'},
             "body": html
         }
 
@@ -239,8 +237,7 @@ class Response:
         return {
             "isBase64Encoded": False,
             "statusCode": 200,
-            "headers": {'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'},
+            "headers": {'Content-Type': 'application/json'},
             "body": json.dumps(jsonObj)
         }
 

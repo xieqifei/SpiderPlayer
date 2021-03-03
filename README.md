@@ -179,7 +179,7 @@ api请求示例：
 返回json，且状态码为`status_code=400`
 
 ```json
-{'err_code':'1','err_msg':'query incorrect'}
+{"err_code":1,"err_msg":"query incorrect"}
 ```
 
 - 其他说明
