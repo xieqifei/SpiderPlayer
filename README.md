@@ -62,11 +62,13 @@ demo：https://y.sci.ci
 
 例如：`https://service-q3l564rw-1258461674.hk.apigw.tencentcs.com/release/`
 
-打开后应当由播放器界面了。并且能够听歌，搜歌。
+打开后应当有播放器界面了。并且能够听歌，搜歌。
 
 这个网址是否太冗长了？现在添加自定义域名
 
 ## 2.2 自定义域名
+
+需要你自己购买了域名，任何域名都可以。无需备案。
 
 1. 点击上图中的`Api服务名`
 
@@ -106,7 +108,9 @@ demo：https://y.sci.ci
 
 2. 后端api
 
-在项目目录里，有一个名为[back-api.py](https://github.com/xieqifei/SpiderPlayer/blob/main/back-api.py)的python文件，你可以将它部署到你的云函数上，通过api调用，返回推荐列表、搜索结果列表和音乐信息。如果部署`index.py`文件，当没有参数或者参数错误时，会返回html文本，而`back-api.py`没有html返回。
+云函数的入口函数是`index.py`，前端调用的api都在这个py文件里。
+
+如果你想为你的安卓或者桌面应用安装后端api，在项目目录里，有一个名为[back-api.py](https://github.com/xieqifei/SpiderPlayer/blob/main/back-api.py)的python文件，你可以将它部署到你的云函数上，通过api调用，返回推荐列表、搜索结果列表和音乐信息。如果函数入口是`index.py`文件，当没有参数或者参数错误时，会返回html文本，而`back-api.py`没有html返回。
 
 - ⭐所有请求必填参数`src=bilibili`或者`src=youtube`
 
@@ -132,7 +136,7 @@ api请求示例：
 >
 > cover：音乐封面
 >
-> id：音乐id。
+> id：音乐id
 >
 > duration：时长
 >
@@ -150,7 +154,7 @@ api请求示例：
 [{"source": "bilibili", "url": "", "name": "\u3010\u8c2d\u6676\u3011", "artist": "", "cover": "", "id": "BV1ao4y197Fn", "duration": "4:28", "expire": ""}, {"source": "bilibili", "url": "", "name": "\u4e00\u5f00\u53e3\u5c31", "artist": "", "cover": "", "id": "BV1xt4y1B7fr", "duration": "3:14", "expire": ""} ]
 ```
 
-> 响应说明同上
+> 参数说明同上
 
 - 参数为`id=视频id`时，返回该视频对应的音频播放链接。
 
@@ -172,10 +176,10 @@ api请求示例：
 
 - 参数错误，或者无参数
 
-返回json，且状态码为`status_code=404`
+返回json，且状态码为`status_code=400`
 
 ```json
-{'msg':'query incorrect'}
+{'err_code':'1','err_msg':'query incorrect'}
 ```
 
 - 其他说明
