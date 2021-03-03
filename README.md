@@ -4,22 +4,23 @@ SpiderPlayer
 
 # 1：简介
 
-![image-20210227121211210](https://i.loli.net/2021/02/27/dVsSwG3nMY8bBC9.png)
+![image-20210303142932744](https://i.loli.net/2021/03/03/dZhYX1IvpzLGceS.png)
 
 demo：https://y.sci.ci
 
-曲库：音乐曲库来自B站的视频资源，通过爬虫程序直接爬取到b站视频的音频链接。
+曲库：爬虫爬取B站和Youtube资源。
 
 前端：Mdui库开发Web前端页面。
 
 ### 特色：
 
-1. 完全免费的曲库
-2. 本地安装无服务框架，可不依赖服务器运行
+1. 现支持B站和Youtube资源
+2. 海量曲库，几乎所有音乐都有
 3. 可利用腾讯云函数免费额度，实现完全免费
-4. 添加歌曲到收藏，收藏保存到本地
-5. 一键播放全部收藏、推荐歌曲
+4. 添加歌曲到收藏，收藏保存到本地，由于浏览器储存限制，一般收藏数量为几十首。
+5. 一键播放列表歌曲
 6. 退出重进后，自动加载上次的播放列表
+7. 支持搜索Youtube播放列表id和播放列表链接
 
 # 2：部署说明
 
@@ -105,65 +106,69 @@ demo：https://y.sci.ci
 
 2. 后端api
 
-在项目目录里，有一个名为[back-api.py](https://github.com/xieqifei/SpiderPlayer/blob/main/back-api.py)的python文件，你可以将它部署到你的云函数上，通过api调用，返回推荐列表、搜索结果列表和音乐信息。如果部署`index.py`文件，当没有参数或者参数错误时，会返回html文本，而`back-api.py`没有html返回。参数错误时，会返回错误信息。
+在项目目录里，有一个名为[back-api.py](https://github.com/xieqifei/SpiderPlayer/blob/main/back-api.py)的python文件，你可以将它部署到你的云函数上，通过api调用，返回推荐列表、搜索结果列表和音乐信息。如果部署`index.py`文件，当没有参数或者参数错误时，会返回html文本，而`back-api.py`没有html返回。
 
-- 参数为`rc=1`时，返回推荐列表
+- ⭐所有请求必填参数`src=bilibili`或者`src=youtube`
+
+- 参数为`rc=1`时，返回bilibili推荐列表
 
 api请求示例：
 
-> https://y.sci.ci/?rc=1
+> https://y.sci.ci/?src=bilibili&rc=1
 
-返回json格式数据
+返回一个json列表
 
 ```json
-[{"name": "\u3010\u8c2d\u6676\u3011\u300a\u8d64\u4f36\u300b\u6765\u4e86\uff01\u7ecf\u5178\u541f\u5531\u518d\u73b0\uff0c\u6781\u9650\u58f0\u538b\u642d\u914d\u7edd\u7f8e\u620f\u8154\u5531\u5c3d\u7c89\u58a8\u60b2\u6b22\uff01", "duration": "4:28", "bv": "BV1ao4y197Fn"}, {"name": "\u6c6a\u5cf0Feat.\u5f20\u827a\u5174&amp;GAI\u5468\u5ef6\u300a\u6ca1\u6709\u4eba\u5728\u4e4e\u300b", "duration": "4:33", "bv": "BV1DV411q7dv"}]
+[{"source": "bilibili", "url": "", "name": "\u3010\u8c2d\u6676\u3011", "artist": "", "cover": "", "id": "BV1ao4y197Fn", "duration": "4:28", "expire": ""}, {"source": "bilibili", "url": "", "name": "\u4e00\u5f00\u53e3\u5c31", "artist": "", "cover": "", "id": "BV1xt4y1B7fr", "duration": "3:14", "expire": ""} ]
 ```
 
-> name：视频名称
+> source：音乐来源
+>
+> url：音乐url
+>
+> name：音乐名称
+>
+> artist：歌手，实际上是up主或者youtuber
+>
+> cover：音乐封面
+>
+> id：音乐id。
 >
 > duration：时长
 >
-> bv：B站视频的id
+> expire：音乐url有效时间戳
 
 - 参数为`kw=搜索关键词`，返回搜索结果
 
 api请求示例：
 
-> [https://y.sci.ci/?kw=明天你好](https://y.sci.ci/?kw=明天你好)
+> [https://y.sci.ci/?src=bilibili&kw=明天你好](https://y.sci.ci/?src=bilibili&kw=%E6%98%8E%E5%A4%A9%E4%BD%A0%E5%A5%BD)
 
-返回JSON格式数据：
+返回一个json列表：
 
 ```json
-[{"bvurl": "https://www.bilibili.com/video/BV13s411Z7xk?from=search", "bv": "BV13s411Z7xk", "name": "\u660e\u5929\u4f60\u597d\u2014\u2014\u725b\u5976\u5496\u5561", "duration": "04:29"}, {"bvurl": "https://www.bilibili.com/video/BV19J411N7L5?from=search", "bv": "BV19J411N7L5", "name": "\u300a\u660e\u5929\u4f60\u597d\u300b\u725b\u5976\u5496\u5561\u539f\u58f0\u73b0\u573a\u7248", "duration": "04:25"}]
+[{"source": "bilibili", "url": "", "name": "\u3010\u8c2d\u6676\u3011", "artist": "", "cover": "", "id": "BV1ao4y197Fn", "duration": "4:28", "expire": ""}, {"source": "bilibili", "url": "", "name": "\u4e00\u5f00\u53e3\u5c31", "artist": "", "cover": "", "id": "BV1xt4y1B7fr", "duration": "3:14", "expire": ""} ]
 ```
 
-> bvurl：视频链接
->
-> name：视频名称
->
-> bv：视频id
->
-> duration：时长
+> 响应说明同上
 
-- 参数为`bv=视频id`时，返回该视频对应的音频播放链接
+- 参数为`id=视频id`时，返回该视频对应的音频播放链接。
+
+视频id必须和id来源一一对应。bilibili的id和youtubeid不能混用。
 
 api请求示例：
 
-> https://y.sci.ci/?bv=BV19J411N7L5
+> https://y.sci.ci/?src=bilibili&id=BV1hX4y1N7b1
 
-返回json格式数据：
+返回一个json字典：
 
 ```json
-{"url":"https://upos-hz-mirrorakam.akamaized.net/upgcxcode/79/75/116567579/116567579-1-30216.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1614435871&gen=playurlv2&os=akam&oi=2090631651&trid=aaac08032c2840198f006b980da60e95u&platform=pc&upsig=44ca9272ea24c842257094bb7cbcb666&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,platform&hdnts=exp=1614435871~hmac=9f070f7624757a85e5c3850236ba722646d2a3ce7269a5280f9e2cfde8055d7f&mid=0&orderid=0,1&agrr=0&logo=80000000","name":"《明天你好》牛奶咖啡原声现场版","cover":"data:image/ab0e63c58c8c29f4b05c1179cfc5866644e72d8e.jpg;base64,/9j/4AAQSkZJRgABAQAAAQ~~~内容截断~~~ABAAD/4gIoSUNDXqSE3NNUPY47j//2Q==","artist":"張老师不是老师"}
+{"source": "bilibili", "url": "https://upos-hz-mirrorakam.akamaized.net/upgcxcode/32/69/288886932/288886932-1-30232.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1614786149&gen=playurlv2&os=akam&oi=2179117609&trid=1dbccebd1b4c44569ca99e388c8df8bdu&platform=pc&upsig=445e87297a7e81f8f135b49826cc1c0d&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,platform&hdnts=exp=1614786149~hmac=68112df0a94503e32ceac091400fc1a57f6c6beb719ba797a2bf53278875469e&mid=0&orderid=0,1&agrr=0&logo=80000000", "name": "\u3010\u5fc3\u534e\u7ffb\u5531\u3011\u660e\u5929\u4f60\u597d\uff08cover\uff1a\u725b\u5976\u5496\u5561\uff09", "artist": "\u7687\u752b\u9dc7", "cover": "data:image/48ad11d1d8a1e8f46cc8924a7db09c83df186411.jpg;base64,/9j/4AAQS~~省略若干~~wUV//Z", "id": "BV1hX4y1N7b1", "duration": "", "expire": "1614786149"}
 ```
 
-> url：音频地址，可直接在aplayer播放器上播放，其他播放器不知道能不能播放，没有防盗链
->
-> name：视频名称
+> url：音乐播放链接，链接在expire时间戳对应时间到后失效。
 >
 > cover：base64编码的up主头像图片。由于图像设有防盗链，直接传图像地址img标签无法加载，而且云函数无法返回文件(二进制代码)，因此通过python程序直接将图像资源转为base64编码格式的字符串。此字符串添加到img标签的src中可以直接显示
->
-> artist：up主昵称
 
 - 参数错误，或者无参数
 
@@ -172,6 +177,10 @@ api请求示例：
 ```json
 {'msg':'query incorrect'}
 ```
+
+- 其他说明
+
+当设置来源为YouTube时，返回的音乐播放链接需要翻墙才能播放。
 
 # 4：TODO
 
@@ -182,8 +191,10 @@ api请求示例：
 5. 我的收藏里添加分类
 6. 主题修改
 
-# 5：项目基于开源
+# 5：受以下开源项目启发
 
 [Aplayer](https://github.com/DIYgod/APlayer)
 
 [Mdui](https://github.com/zdhxiong/mdui)
+
+[Pytube](https://github.com/pytube/pytube)
