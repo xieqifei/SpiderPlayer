@@ -107,7 +107,7 @@
   homeList = $.parseJSON(musicliststr);
   href = location.href;
   if(href.indexOf('youtube')!=-1){
-    $("#progress").show();
+    showProgress(1)
     searchOnYoutube(href,showYoutuResult);
     switchBtnSty(1);
     $.ajax({
@@ -185,17 +185,13 @@
 
   //发起搜索请求
   function getMusicList(kw) {
-    $("#progress").show();
+    showProgress(1)
     $("#search_source").show();
     searchOnYoutube(kw,()=>{});
     searchOnBili(kw,showBiliResult);
   }
 
-  //刷新youtube搜索结果
-  function showYoutuResult(json){
-    showResultList(json);
-    switchBtnSty(1);
-  }
+  
   //在youtube上搜索
   function searchOnYoutube(kw, callback){
     $.ajax({
@@ -205,14 +201,19 @@
       dataType: "json", success: function (json) {
         searchlist[1] = json;
         callback(json);
-        $("#progress").hide();
+        showProgress(0)
       },
       error: function (xhr, status, error) {
-        $("#progress").hide();
+        showProgress(0)
       }
     });
   }
-  
+
+  //刷新youtube搜索结果
+  function showYoutuResult(json){
+    showResultList(json);
+    switchBtnSty(1);
+  }
 
   //刷新bili搜索结果页面
   function showBiliResult(list){
@@ -227,11 +228,11 @@
       dataType: "json", success: function (json) {
           searchlist[0] = json;
           callback(json);
-          $("#progress").hide();
+          showProgress(0)
           
       },
       error: function (xhr, status, error) {
-        $("#progress").hide();
+        showProgress(0)
       }
     });
   }
@@ -240,7 +241,6 @@
   function showResultList(musiclist){
     showList(musiclist);
     $("#path").html("搜索结果");
-    $("#progress").hide();
   }
 
   // 刷新一个列表
@@ -264,22 +264,27 @@
       td.append('<button id="open'+i+'" class="mdui-btn mdui-btn-icon mdui-p-l-1  mdui-p-r-1"  mdui-menu="{target: \'#options'+i+'\'}"><i class="mdui-icon material-icons">more_vert</i></button>');
       td.append('<ul class="mdui-menu" id="options'+i+'"></ul>');
       ul = $("#options"+i);
-      ul.append('<li class="mdui-menu-item"> <a href="javascript:play(\''+music.id+'\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">&#xe039;</i>播放</a></li>');
+      ul.append('<li class="mdui-menu-item"> <a href="javascript:downloadMusic(\''+music.id+'\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">file_download</i>下载</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:addListEnd(\''+music.id+'\');showMsg(\'已添加至播放列表\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">playlist_add</i>添加到播放列表</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:addFavorite(\''+music.name+'\',\''+music.id+'\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">favorite_border</i>收藏</a></li>');
- 
     }
    
   }
 
-  //监听是否点击歌名，点击歌名时播放音乐
-  $(document).on('click',".musicname",(e)=>{
-     play($(e.target).attr('data-id'));
-  });
 
-  // 通过id请求音乐直链并播放
-  function play(id) {
-    $("#progress").show();
+  function downloadMusic(id){
+    showProgress(1);
+    getMusicById(id,(music)=>{
+      showProgress(0);
+      window.open(music.url);
+    },()=>{
+      showProgress(0);
+      alert("获取下载地址失败！");
+    });
+  }
+
+  //ajax 请求音乐，id：音乐id，succfunc，请求成功的回调函数；errfunc，请求失败的回调
+  function getMusicById(id,succfunc,errfunc){
     if(id.length==12){
       src = "bilibili";
     }else if(id.length==11){
@@ -289,23 +294,47 @@
       url: baseUrl + "?id=" + id+"&src="+src, 
       type: 'get',
       dataType: "json", success: function (music) {
-        ap.list.add([{
+        succfunc(music);
+      },
+      error: function (xhr, status, error) {
+        errfunc();
+      }
+    });
+  }
+
+  //show=0,隐藏进度条，show=1，显示进度条
+  function showProgress(show){
+    if(show==0){
+      $("#progress").hide();
+    }else{
+      $("#progress").show();
+    }
+  }
+
+  //监听是否点击歌名，点击歌名时播放音乐
+  $(document).on('click',".musicname",(e)=>{
+     play($(e.target).attr('data-id'));
+  });
+
+  // 通过id请求音乐直链并播放
+  function play(id) {
+    showProgress(1)
+    getMusicById(id,(music)=>{
+      ap.list.add([{
           name: music.name,
           artist: music.artist,
           url: music.url,
           cover: music.cover
         }]);
-        $("#progress").hide();
+        showProgress(0)
         var playlist = localStorage.getItem("playlist") ? JSON.parse(localStorage.getItem("playlist")) : [];
         playlist.push({ "name": music.name, "id": id })
         localStorage.setItem("playlist", JSON.stringify(playlist));
         ap.play();
         ap.list.switch(ap.list.audios.length - 1);
-      },
-      error: function (xhr, status, error) {
-        $("#progress").hide();
+    },()=>{
+      showProgress(0)
         window.alert("播放失败，请尝试其他搜索结果");
-      }
     });
   }
 
@@ -315,7 +344,7 @@
 
   //播放一个指定列表
   function playPlaylist(playlist) {
-    $("#progress").show();
+    showProgress(1)
     localStorage.setItem("playlist", "");
     ap.list.clear();
     ap.list.hide();
@@ -333,33 +362,19 @@
 
   //添加到播放列表
   function addListEnd(id) {
-    if(id.length==12){
-      src = "bilibili";
-    }else if(id.length==11){
-      src = "youtube";
-    }
-
-    $.ajax({
-      url: baseUrl + "?id=" + id+"&src="+src, 
-      type: 'get',
-      dataType: "json", success: function (music) {
-        ap.list.add([{
+    getMusicById(id,(music)=>{
+      ap.list.add([{
           name: music.name,
           artist: music.artist,
           url: music.url,
           cover: music.cover
         }]);
         pushPlaylist(music)
-        $("#progress").hide();
+        showProgress(0)
         if ($("#path").html() == '播放列表') {
           updatePlaylist(playlist.length-1,music);
         }
-      },
-      error: function (xhr, status, error) {
-        $("#progress").hide();
-        //应该用提示
-      }
-    });
+    },()=>{showProgress(0)});
   }
 
   //将音乐放入本地播放列表储存
@@ -428,7 +443,7 @@
       td.append('<button id="open'+i+'" class="mdui-btn mdui-btn-icon mdui-p-l-1  mdui-p-r-1"  mdui-menu="{target: \'#options'+i+'\'}"><i class="mdui-icon material-icons">more_vert</i></button>');
       td.append('<ul class="mdui-menu" id="options'+i+'"></ul>');
       ul = $("#options"+i);
-      ul.append('<li class="mdui-menu-item"> <a href="javascript:switchAndPlayItem(' + i + ');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">&#xe039;</i>播放</a></li>');
+      ul.append('<li class="mdui-menu-item"> <a href="javascript:window.open(\'' + music.url + '\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">file_download</i>下载</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:deletePlayingItem(' + i + ');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">delete</i>删除</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:addFavorite(\''+music.name+'\',getBVformName(\''+music.name+'\'));" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">favorite_border</i>收藏</a></li>');
   }
@@ -473,7 +488,7 @@
         $("#music_title").html("").append(btn_oprtAll);
         $("#music_title").append('<ul class="mdui-menu" style="" id="options"></ul>');
         $("#options").append('<li class="mdui-menu-item"><a href="javascript:deleteCheckedFromFavorite();" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">delete</i>删除选中</a></li>');
-        $("#options").append('<li class="mdui-menu-item"><a href="javascript:playChecked();" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">favorite_border</i>播放选中</a></li>');
+        $("#options").append('<li class="mdui-menu-item"><a href="javascript:playChecked();" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">&#xe039;</i>播放选中</a></li>');
       }
     }
     
