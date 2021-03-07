@@ -57,8 +57,8 @@
 
   <div style="overflow:hidden ; position: absolute; width: 100%;">
     <div class="mdui-tab mdui-tab-full-width" style="display: none;" id="search_source">
-      <a href="javascript:showResultList(searchlist[0]);" class="mdui-ripple">Bilibili</a>
-      <a href="javascript:showResultList(searchlist[1]);" class="mdui-ripple">Youtube</a>
+      <a id="result_bili" href="javascript:showResultList(searchlist[0]);switchBtnSty(0);" class="mdui-ripple">Bilibili</a>
+      <a id="result_youtu" href="javascript:showResultList(searchlist[1]);switchBtnSty(1);" class="mdui-ripple">Youtube</a>
     </div>
     <div class="mdui-container" id="functions" style="display: none;">
     </div>
@@ -85,7 +85,8 @@
 
 
   var baseUrl = location.protocol+"//"+location.host+location.pathname;
-
+  // var baseUrl = "https://y.sci.ci"
+  
   var ready2playlist = [];
   var searchlist = [];
   var isCheckboxShowed=false;
@@ -96,6 +97,7 @@
   });
 
 
+
   /***************/
   //主页功能集合
   /***************/
@@ -103,10 +105,20 @@
   var homeList = [];
   musicliststr = '[{"bvurl": "https://www.bilibili.com/video/BV1nx41147KN?from=search", "id": "BV1nx41147KN", "name": "\u5468\u6770\u4f26 - \u624b\u5199\u7684\u4ece\u524d", "duration": "04:55"}, {"bvurl": "https://www.bilibili.com/video/BV1ft411v7xV?from=search", "id": "BV1ft411v7xV", "name": "\u5dc5\u5cf0\u65f6\u671f\u7684\u5468\u6770\u4f26\u6709\u591a\u6050\u6016\u5f53\u300a\u4e03\u91cc\u9999\u300b\u524d\u594f\u54cd\u8d77\uff0c\u6574\u4e2a\u4e9a\u6d32\u75af\u72c2", "duration": "06:55"}, {"bvurl": "https://www.bilibili.com/video/BV13C4y1p7jQ?from=search", "id": "BV13C4y1p7jQ", "name": "\u53ccJ\u5408\u4f53\u81f4\u656c\u767d\u8863\u5929\u4f7f\uff01\u5468\u6770\u4f26\u6797\u4fca\u6770\u5408\u5531\u300a\u7a3b\u9999+Stay with you\u300b", "duration": "06:18"}, {"bvurl": "https://www.bilibili.com/video/BV1t4411978X?from=search", "id": "BV1t4411978X", "name": "\u30101080P\u4fee\u590d\u7248\u3011\u5468\u6770\u4f26 - \u4e16\u754c\u672b\u65e5MV", "duration": "04:21"}, {"bvurl": "https://www.bilibili.com/video/BV1ba4y1L7Nt?from=search", "id": "BV1ba4y1L7Nt", "name": "\u3010\u5468\u6770\u4f26x\u9093\u7d2b\u68cb\u3011\u4ee5\u7236\u4e4b\u540d x \u5b64\u72ec Remix\uff08\u5efa\u8bae\u4f69\u6234\u8033\u673a\u98df\u7528\uff09", "duration": "03:23"}, {"bvurl": "https://www.bilibili.com/video/BV1Ab411u766?from=search", "id": "BV1Ab411u766", "name": "\u5468\u6770\u4f26-\u672c\u8349\u7eb2\u76ee", "duration": "03:48"}, {"bvurl": "https://www.bilibili.com/video/BV1L4411d7K2?from=search", "id": "BV1L4411d7K2", "name": "\u5dee\u70b9\u628a\u6211\u5531\u54ed\u7684\u6b4c\u2014\u2014\u6700\u957f\u7684\u7535\u5f71\uff08cover\u5468\u6770\u4f26\uff09", "duration": "03:50"}, {"bvurl": "https://www.bilibili.com/video/BV1d4411N7zD?from=search", "id": "BV1d4411N7zD", "name": "\u30101080P\u4fee\u590d\u3011\u5468\u6770\u4f26 - \u6674\u5929MV \u4fee\u590d\u7248", "duration": "05:17"}]';
   homeList = $.parseJSON(musicliststr);
-  continueLastPlay();
-
-
-  $.ajax({
+  href = location.href;
+  if(href.indexOf('youtube')!=-1){
+    $("#progress").show();
+    searchOnYoutube(href,showYoutuResult);
+    switchBtnSty(1);
+    $.ajax({
+    url: baseUrl + "?rc=1&src=bilibili",
+    dataType: "json", success: function (json) {
+      homeList = json;
+    }
+  });
+  }else{
+    continueLastPlay();
+    $.ajax({
     url: baseUrl + "?rc=1&src=bilibili",
     dataType: "json", success: function (json) {
       homeList = json;
@@ -116,6 +128,9 @@
       showHomeList();
     }
   });
+  }
+  
+
 
   //拉去本地正在播放列表，并添加到播放清单
   function continueLastPlay() {
@@ -153,30 +168,67 @@
     );
   });
 
-
+  //切换搜索按钮样式,id=0,bili;id=1,youtu
+  function switchBtnSty(id){
+    if(id==0){
+      $('#result_bili').css('color','blue');
+      $('#result_bili').css('font-size','x-large');
+      $('#result_youtu').css('color','');
+      $('#result_youtu').css('font-size','');
+    }else if(id==1){
+      $('#result_bili').css('color','');
+      $('#result_bili').css('font-size','');
+      $('#result_youtu').css('color','blue');
+      $('#result_youtu').css('font-size','x-large');
+    }
+  }
 
   //发起搜索请求
   function getMusicList(kw) {
     $("#progress").show();
     $("#search_source").show();
-    $.ajax({
-      url: baseUrl + "?kw=" + kw+"&src="+"bilibili", 
-      type: 'get',
-      dataType: "json", success: function (json) {
-        searchlist[0] = json;
-        showResultList(json);
-      },
-      error: function (xhr, status, error) {
-        $("#progress").hide();
-      }
-    });
+    searchOnYoutube(kw,()=>{});
+    searchOnBili(kw,showBiliResult);
+  }
 
+  //刷新youtube搜索结果
+  function showYoutuResult(json){
+    showResultList(json);
+    switchBtnSty(1);
+  }
+  //在youtube上搜索
+  function searchOnYoutube(kw, callback){
     $.ajax({
       url: baseUrl + "?kw=" + kw+"&src="+"youtube", 
       type: 'get',
       timeout: 4000,
       dataType: "json", success: function (json) {
-          searchlist[1] = json;
+        searchlist[1] = json;
+        callback(json);
+        $("#progress").hide();
+      },
+      error: function (xhr, status, error) {
+        $("#progress").hide();
+      }
+    });
+  }
+  
+
+  //刷新bili搜索结果页面
+  function showBiliResult(list){
+    showResultList(list);
+    switchBtnSty(0);
+  }
+  //在bili上搜索
+  function searchOnBili(kw,callback){
+    $.ajax({
+      url: baseUrl + "?kw=" + kw+"&src="+"bilibili", 
+      type: 'get',
+      dataType: "json", success: function (json) {
+          searchlist[0] = json;
+          callback(json);
+          $("#progress").hide();
+          
       },
       error: function (xhr, status, error) {
         $("#progress").hide();
@@ -205,7 +257,7 @@
       $("#tbbody").append('<tr id=music' + i + '></tr>');
       tr = $("#music"+i);
       tr.append('<td>' + (i + 1) + '</td>');
-      tr.append('<td class="mdui-p-a-1">' + music.name + '</td>');
+      tr.append('<td class="mdui-p-a-1 musicname" data-id="'+music.id+'" >' + music.name + '</td>');
       tr.append( '<td class="mdui-p-l-0">' + music.duration + '</td>');
       tr.append('<td class="mdui-p-l-1  mdui-p-r-1" id="td'+i+'"></td>');
       td = $("#td"+i);
@@ -219,6 +271,11 @@
     }
    
   }
+
+  //监听是否点击歌名，点击歌名时播放音乐
+  $(document).on('click',".musicname",(e)=>{
+     play($(e.target).attr('data-id'));
+  });
 
   // 通过id请求音乐直链并播放
   function play(id) {
@@ -359,13 +416,13 @@
     $("#search_source").hide();
   }
 
-  //刷新依次播放列表
+  //依次添加单首歌到展示播放列表
   function updatePlaylist(i,music){
       $("#tbbody").append('<tr id="music' + i + '"></tr>');
       tr = $("#music"+i);
       tr.append('<td class="checkbox mdui-p-r-1 " '+(isCheckboxShowed?'':'style="display:none"')+'><label class="mdui-checkbox"><input class="checkinput" name="'+music.name+'" value="'+i+'" type="checkbox"/><i class="mdui-checkbox-icon"></i></label></td>');
       tr.append('<td class="sort-number"'+(isCheckboxShowed?'style="display:none"':'')+'>' + (i + 1) + '</td>');
-      tr.append('<td class="mdui-p-a-1">' + music.name + '</td>');
+      tr.append('<td class="mdui-p-a-1 listmusicname" data-id="'+i+'">' + music.name + '</td>');
       tr.append('<td class="mdui-p-l-1  mdui-p-r-1" id="td'+i+'"></td>');
       td = $("#td"+i);
       td.append('<button id="open'+i+'" class="mdui-btn mdui-btn-icon mdui-p-l-1  mdui-p-r-1"  mdui-menu="{target: \'#options'+i+'\'}"><i class="mdui-icon material-icons">more_vert</i></button>');
@@ -375,6 +432,11 @@
       ul.append('<li class="mdui-menu-item"><a href="javascript:deletePlayingItem(' + i + ');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">delete</i>删除</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:addFavorite(\''+music.name+'\',getBVformName(\''+music.name+'\'));" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">favorite_border</i>收藏</a></li>');
   }
+
+  //监听点击歌名，并播放对应歌曲
+  $(document).on('click','.listmusicname',(e)=>{
+    switchAndPlayItem(parseInt($(e.target).attr('data-id')));
+  });
 
   //展示和关闭checkbox
   function showCheckbox(){
@@ -529,14 +591,13 @@
       tr = $("#music"+i);
       tr.append('<td class="checkbox mdui-p-r-1 " '+(isCheckboxShowed?'':'style="display:none"')+'><label class="mdui-checkbox"><input class="checkinput" name="'+music.id+'" value="'+i+'" type="checkbox"/><i class="mdui-checkbox-icon"></i></label></td>');
       tr.append('<td class="sort-number"'+(isCheckboxShowed?'style="display:none"':'')+'>' + (i + 1) + '</td>');
-      tr.append('<td class="mdui-p-a-1">' + music.name + '</td>');
+      tr.append('<td class="mdui-p-a-1 musicname" name="'+music.id+'">' + music.name + '</td>');
       tr.append('<td class="mdui-p-l-1  mdui-p-r-1" id="td'+i+'"></td>');
       td = $("#td"+i);
       td.append('<button id="open'+i+'" class="mdui-btn mdui-btn-icon mdui-p-l-1  mdui-p-r-1"  mdui-menu="{target: \'#options'+i+'\'}"><i class="mdui-icon material-icons">more_vert</i></button>');
       td.append('<ul class="mdui-menu" id="options'+i+'"></ul>');
       ul = $("#options"+i);
       ul.append('<li class="mdui-menu-item"> <a href="javascript:play(\''+music.id+'\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">&#xe039;</i>播放</a></li>');
-      // ul.append('<li class="mdui-menu-item"> <a href="javascript:addNextPlay(\''+music.bv+'\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">playlist_play</i>下一首播放</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:copyShareLink(\''+music.id+'\');showMsg(\'已添加至剪切板\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">share</i>分享</a></li>');
       ul.append('<li class="mdui-menu-item"><a href="javascript:deleteFavorite(\''+music.id+'\');" class="mdui-ripple"><i class="mdui-menu-item-icon mdui-icon material-icons">&#xe872;</i>删除</a></li>');
 
@@ -698,5 +759,4 @@
   }
 
 </script>
-
 </html>

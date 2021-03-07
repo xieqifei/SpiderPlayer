@@ -12,7 +12,9 @@ demo：https://y.sci.ci
 
 前端：Mdui库开发Web前端页面。
 
-### 特色：
+## 更新：
+
+### v1.0
 
 1. 现支持B站和Youtube资源
 2. 海量曲库，几乎所有音乐都有
@@ -21,6 +23,21 @@ demo：https://y.sci.ci
 5. 一键播放列表歌曲
 6. 退出重进后，自动加载上次的播放列表
 7. 支持搜索Youtube播放列表id和播放列表链接
+
+### v1.1
+
+1. 支持在youtube播放列表之前加入自己的域名来构造搜索
+
+> 例：`https://www.youtube.com/playlist?list=PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa`
+>
+> 加入自己的播放器url，构造链接为：
+>
+> `https://y.sci.ci/https://www.youtube.com/playlist?list=PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa`
+>
+> 直接返回播放列表搜索结果
+
+2. 添加搜索结果中btn样式
+3. 点击歌曲名播放
 
 # 2：部署说明
 
