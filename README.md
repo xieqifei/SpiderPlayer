@@ -1,27 +1,22 @@
 SpiderPlayer
 
-基于Aplayer播放器和网络爬虫的播放器。海量的免费曲库，本地储存歌单，基于无服务构架，响应式布局。
+基于MKOnlineMusicPlayer和网络爬虫的播放器。海量的免费曲库，本地储存歌单，基于无服务构架，响应式布局。
 
 # 1：简介
 
-![image-20210303142932744](https://i.loli.net/2021/03/03/dZhYX1IvpzLGceS.png)
+![image-20210309235105178](https://i.loli.net/2021/03/10/IB8psHLQERTmjeo.png)
 
-demo：https://y.sci.ci
+demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spiderplayer
 
-曲库：爬虫爬取B站和Youtube资源。
+曲库：Python爬虫爬取B站和Youtube资源。
 
-前端：Mdui库开发Web前端页面。
+前端：基于MKOnlineMusicPlayer。
 
 ## 更新：
 
-### v1.0
+### v2.0
 
-1. 支持B站和Youtube资源
-4. 支持添加歌曲到收藏，收藏上限受浏览器限制，在几十首内
-5. 支持一键全部播放
-4. 支持选中操作
-5. 支持退出重进后，自动加载上次的播放列表
-6. 支持搜索Youtube播放列表id和播放列表链接
+1. 在MKOnlineMusicPlayer的UI基础上更新功能
 
 ### v1.1
 
@@ -38,6 +33,17 @@ demo：https://y.sci.ci
 2. 修改搜索结果中btn样式
 3. 支持点击歌曲名播放
 4. 支持下载歌曲
+
+### v1.0
+
+1. 支持B站和Youtube资源
+4. 支持添加歌曲到收藏，收藏上限受浏览器限制，在几十首内
+5. 支持一键全部播放
+4. 支持选中操作
+5. 支持退出重进后，自动加载上次的播放列表
+6. 支持搜索Youtube播放列表id和播放列表链接
+
+4. 
 
 # 2：部署说明
 
@@ -115,15 +121,29 @@ demo：https://y.sci.ci
 
 保存后即可使用短域名访问你的网站了
 
+## 2.3 静态资源替换
+
+在`index.html`文件中有许多css、js、图片文件，由于腾讯云函数的限制，静态资源无法直接从云函数中下载，所以这些文件都暂时存放在我的云储存桶中，由于储存桶是收费的，如果这个应用被越来越多的人使用，我的储存桶可能面临高额的流量费用。彼时如果我在我的储存桶中设置了防盗链，许多依赖于此的静态资源将无法访问，可能会导致你克隆的本项目功能缺失，因此我强烈推荐你将静态资源放到自己的储存桶中，或一些免费的图床、jscdn。
+
+替换原有的js、css和图片资源。
+
+所有的静态资源都在本仓库中`cdn`文件夹下，在替换`index.html`中引用的静态资源之前，需要你先替换cdn文件夹中的`js/functions.js`中的图片引用
+
+在`js/functions.js`中搜索`https://qn.xieqifei.com/spiderplayer/`
+
+![image-20210310001954941](https://i.loli.net/2021/03/10/y7Jk8wsUclCBe3i.png)
+
+如上图所示，播放历史的图片存放在我的储存桶中，你需要将`/cdn/images/history.png`这个图片上传到你的图库，在替换图中的链接。
+
+除此之外，在`/js/function.js`中还有几个静态资源，也需要你替换。
+
+另外，`/js/musicList.js`这个文件中，需要你照葫芦画瓢把静态资源替换掉。
+
+替换了这两个js文件中的静态资源，其他的所有静态资源都只在`index.html`中被引用了。那么，你可以将`cdn`文件夹下的全部文件按照路径顺序上传到你的储存桶，并替换了。
+
+如果你有很稳定快速的免费图床或者jscdn推荐，可以在issue提出来或者直接pr。
+
 # 3：开发说明
-
-1. 前端界面
-
-前端基于mdui。更改样式可学习[Mdui文档](https://www.mdui.org/docs/)
-
-音乐播放器基于Aplayer。修改播放功能，学习[Aplayer文档](https://aplayer.js.org/#/zh-Hans/)
-
-2. 后端api
 
 云函数的入口函数是`index.py`，前端调用的api都在这个py文件里。
 
@@ -210,10 +230,8 @@ api请求示例：
 4. ~~歌单添加音乐~~
 6. 主题修改
 
-# 5：受以下开源项目启发
+# 5：鸣谢以下开源项目
 
-[Aplayer](https://github.com/DIYgod/APlayer)
-
-[Mdui](https://github.com/zdhxiong/mdui)
+[MKOnlineMusicPlayer](https://github.com/mengkunsoft/MKOnlineMusicPlayer)
 
 [Pytube](https://github.com/pytube/pytube)
