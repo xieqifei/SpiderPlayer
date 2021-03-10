@@ -29,7 +29,7 @@ var musicList = [
     // 预留列表：播放历史
     {
         name: "播放历史",   // 播放列表名字
-        cover: "https://qn.xieqifei.com/spiderplayer/images/history.png",          // 播放列表封面
+        cover: "data:image/png;base64,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",          // 播放列表封面
         creatorName: "",        // 列表创建者名字
         creatorAvatar: "",      // 列表创建者头像
         item: []
@@ -37,9 +37,7 @@ var musicList = [
     // 以上三个系统预留列表请勿更改，否则可能导致程序无法正常运行！
     //*********************************************
     // 自定义列表开始，您可以自由添加您的自定义列表
-    // {
-    //     id: 3778678     // 云音乐热歌榜
-    // },
+    
     // {
     //     id: 3779629     // 云音乐新歌榜
     // },
@@ -207,6 +205,9 @@ var musicList = [
                 url: ""        
             }  // 列表中最后一首歌大括号后面不要加逗号
         ]
+    },{
+        source: "youtube",
+        id: "PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa"     //youtube播放列表
     }
     // 方式二：直接提供网易云歌单ID
     // {

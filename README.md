@@ -18,6 +18,9 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 
 1. 在MKOnlineMusicPlayer的UI基础上更新功能
 2. 修复白色背景虚化后，文字不清晰问题
+3. 支持添加youtube播放列表为歌单
+4. 保存新添加的歌单到本地
+5. 图片转base64，js、css静态资源替换到html代码中
 
 ### v1.1
 
@@ -121,28 +124,6 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 ![image-20210227130224442](https://i.loli.net/2021/02/27/JdMT3tVX8fIkjue.png)
 
 保存后即可使用短域名访问你的网站了
-
-## 2.3 静态资源替换
-
-在`index.html`文件中有许多css、js、图片文件，由于腾讯云函数的限制，静态资源无法直接从云函数中下载，所以这些文件都暂时存放在我的云储存桶中，由于储存桶是收费的，如果这个应用被越来越多的人使用，我的储存桶可能面临高额的流量费用。彼时如果我在我的储存桶中设置了防盗链，许多依赖于此的静态资源将无法访问，可能会导致你克隆的本项目功能缺失，因此我强烈推荐你将静态资源放到自己的储存桶中，或一些免费的图床、jscdn。
-
-替换原有的js、css和图片资源。
-
-所有的静态资源都在本仓库中`cdn`文件夹下，在替换`index.html`中引用的静态资源之前，需要你先替换cdn文件夹中的`js/functions.js`中的图片引用
-
-在`js/functions.js`中搜索`https://qn.xieqifei.com/spiderplayer/`
-
-![image-20210310001954941](https://i.loli.net/2021/03/10/y7Jk8wsUclCBe3i.png)
-
-如上图所示，播放历史的图片存放在我的储存桶中，你需要将`/cdn/images/history.png`这个图片上传到你的图库，在替换图中的链接。
-
-除此之外，在`/js/function.js`中还有几个静态资源，也需要你替换。
-
-另外，`/js/musicList.js`这个文件中，需要你照葫芦画瓢把静态资源替换掉。
-
-替换了这两个js文件中的静态资源，其他的所有静态资源都只在`index.html`中被引用了。那么，你可以将`cdn`文件夹下的全部文件按照路径顺序上传到你的储存桶，并替换了。
-
-如果你有很稳定快速的免费图床或者jscdn推荐，可以在issue提出来或者直接pr。
 
 # 3：开发说明
 

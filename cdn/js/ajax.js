@@ -203,7 +203,7 @@ function ajaxPic(music, callback)
 }
 
 // ajax加载用户歌单
-// 参数：歌单网易云 id, 歌单存储 id，回调函数
+// 参数：歌单id, 歌单存储 id，歌单源 source,回调函数
 function ajaxPlayList(lid, id, callback) {
     if(!lid) return false;
     
@@ -216,9 +216,9 @@ function ajaxPlayList(lid, id, callback) {
     
     $.ajax({
         type: mkPlayer.method, 
-        url: mkPlayer.api, 
-        data: "types=playlist&id=" + lid,
-        dataType : "jsonp",
+        url: mkPlayer.api+"?src="+musicList[id].source+"&gd="+lid, 
+        // data: "types=playlist&id=" + lid,
+        dataType : "json",
         complete: function(XMLHttpRequest, textStatus) {
             musicList[id].isloading = false;    // 列表已经加载完了
         },  // complete
@@ -226,32 +226,33 @@ function ajaxPlayList(lid, id, callback) {
             // 存储歌单信息
             var tempList = {
                 id: lid,    // 列表的网易云 id
-                name: jsonData.playlist.name,   // 列表名字
-                cover: jsonData.playlist.coverImgUrl,   // 列表封面
-                creatorName: jsonData.playlist.creator.nickname,   // 列表创建者名字
-                creatorAvatar: jsonData.playlist.creator.avatarUrl,   // 列表创建者头像
+                source:jsonData.source,
+                name: jsonData.name,   // 列表名字
+                cover: jsonData.cover,   // 列表封面
+                creatorName: jsonData.creatername,   // 列表创建者名字
+                creatorAvatar: jsonData.creatercover,   // 列表创建者头像
                 item: []
             };
             
-            if(jsonData.playlist.coverImgUrl !== '') {
-                tempList.cover = jsonData.playlist.coverImgUrl + "?param=200y200";
-            } else {
-                tempList.cover = musicList[id].cover;
-            }
+            // if(jsonData.playlist.coverImgUrl !== '') {
+            //     tempList.cover = jsonData.playlist.coverImgUrl + "?param=200y200";
+            // } else {
+            //     tempList.cover = musicList[id].cover;
+            // }
             
-            if(typeof jsonData.playlist.tracks !== undefined || jsonData.playlist.tracks.length !== 0) {
+            if(typeof jsonData.items !== undefined || jsonData.items.length !== 0) {
                 // 存储歌单中的音乐信息
-                for (var i = 0; i < jsonData.playlist.tracks.length; i++) {
+                for (var i = 0; i < jsonData.items.length; i++) {
                     tempList.item[i] =  {
-                        id: jsonData.playlist.tracks[i].id,  // 音乐ID
-                        name: jsonData.playlist.tracks[i].name,  // 音乐名字
-                        artist: jsonData.playlist.tracks[i].ar[0].name, // 艺术家名字
-                        album: jsonData.playlist.tracks[i].al.name,    // 专辑名字
-                        source: "netease",     // 音乐来源
-                        url_id: jsonData.playlist.tracks[i].id,  // 链接ID
+                        id: jsonData.items[i].id,  // 音乐ID
+                        name: jsonData.items[i].name,  // 音乐名字
+                        artist: jsonData.items[i].artist, // 艺术家名字
+                        album: jsonData.name,    // 专辑名字
+                        source: jsonData.source,     // 音乐来源
+                        url_id: null,  // 链接ID
                         pic_id: null,  // 封面ID
-                        lyric_id: jsonData.playlist.tracks[i].id,  // 歌词ID
-                        pic: jsonData.playlist.tracks[i].al.picUrl + "?param=300y300",    // 专辑图片
+                        lyric_id: null,  // 歌词ID
+                        pic: null,    // 专辑图片
                         url: null   // mp3链接
                     };
                 }

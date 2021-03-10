@@ -33,17 +33,33 @@
     <!-- jQuery文件 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js" integrity="sha512-ju6u+4bPX50JQmgU97YOGAXmRMrD9as4LE05PdC3qycsGQmjGlfm041azyB1VfCXpkpt1i9gqXCT6XuxhBJtKg==" crossorigin="anonymous"></script>
     
+    <!-- 样式文件替换 -->
+    <style type="text/css">
+        ${/css/player.css}
+    </style>
+    <style type="text/css">
+        ${/css/small.css}
+    </style>
+    <style type="text/css">
+        ${/css/jquery.mCustomScrollbar.min.css}
+    </style>
+    <!-- <style type="text/css" id="layuicss-skinlayercss">
+        ${/plugns/layer/skin/default/layer.css}
+    </style>  -->
+
     <!-- 播放器样式表文件 -->
-    <link rel="stylesheet" type="text/css" href="https://qn.xieqifei.com/spiderplayer/css/player.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://qn.xieqifei.com/spiderplayer/css/player.css"> -->
     
     <!-- 小屏幕样式修复 -->
-    <link rel="stylesheet" type="text/css" href="https://qn.xieqifei.com/spiderplayer/css/small.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://qn.xieqifei.com/spiderplayer/css/small.css"> -->
     
     <!-- 滚动条美化样式文件 -->
-    <link rel="stylesheet" type="text/css" href="https://qn.xieqifei.com/spiderplayer/css/jquery.mCustomScrollbar.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://qn.xieqifei.com/spiderplayer/css/jquery.mCustomScrollbar.min.css">  -->
     
     <!-- layer弹窗插件样式文件 -->
-    <link rel="stylesheet" href="https://qn.xieqifei.com/spiderplayer/plugns/layer/skin/default/layer.css" id="layuicss-skinlayercss">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layer/3.1.1/theme/default/layer.min.css" integrity="sha512-MRvpqi3H2uzeJIhG6xTMWWZFUPNEeE3S6w4K5mxhuy3L8+0Qpdyp+pZ1RJxY2JM0ak1O1/D0yHztj8TymnlRDA==" crossorigin="anonymous" id="layuicss-skinlayercss"/>
+    <!-- <link rel="stylesheet" href="https://qn.xieqifei.com/spiderplayer/plugns/layer/skin/default/layer.css" id="layuicss-skinlayercss"> -->
+
 </head>
 <body>
 
@@ -82,7 +98,7 @@
         <div class="player" id="player">
             <!--歌曲封面-->
             <div class="cover">
-                <img src="https://qn.xieqifei.com/spiderplayer/images/player_cover.png" class="music-cover" id="music-cover">
+                <img src="data:image/png;base64,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" class="music-cover" id="music-cover">
             </div>
             <!--滚动歌词-->
             <div class="lyric">
@@ -122,29 +138,41 @@
     </div>  <!--class="container"-->
 </div>  <!--class="footer"-->
 
+
+
 <!-- layer弹窗插件 -->
-<script src="https://qn.xieqifei.com/spiderplayer/plugns/layer/layer.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/layer/3.1.1/layer.min.js" integrity="sha512-0YosS8GSyQIZd2uWWNHG95QgN8kPN6WBmjjzakoTRfdCt0YCmJs2HHiiF6tmGwngN/fZ+JH93zFSkW2cv5uGWw==" crossorigin="anonymous"></script>
 
 <!-- 播放器数据加载模块 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/ajax.js"></script>
+<!-- <script src="cdn/js/ajax.js"></script> -->
 
 <!-- 播放器歌词解析模块 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/lyric.js"></script>
+<!-- <script src="cdn/js/lyric.js"></script> -->
 
 <!-- 音乐列表配置 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/musicList.js"></script>
+<!-- <script src="cdn/js/musicList.js"></script> -->
 
 <!-- 封装函数及ui交互模块 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/functions.js"></script>
+<!-- <script src="cdn/js/functions.js"></script> -->
 
 <!-- 播放器主体功能模块 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/player.js"></script>
+<!-- <script src="cdn/js/player.js"></script> -->
 
 <!-- 滚动条美化插件 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- <script src="cdn/js/jquery.mCustomScrollbar.concat.min.js"></script> -->
 
 <!-- 背景模糊化插件 -->
-<script src="https://qn.xieqifei.com/spiderplayer/js/background-blur.min.js"></script>
+<!-- <script src="cdn/js/background-blur.min.js"></script> -->
+
+<!-- js代码替换 -->
+<!-- <script>${/plugns/layer/layer.js}</script> -->
+<script>${/js/ajax.js}</script>
+<script>${/js/lyric.js}</script>
+<script>${/js/musicList.js}</script>
+<script>${/js/functions.js}</script>
+<script>${/js/player.js}</script>
+<script>${/js/jquery.mCustomScrollbar.concat.min.js}</script>
+<script>${/js/background-blur.min.js}</script>
 
 <!-- 站长统计代码 -->
 <span style="display: none">

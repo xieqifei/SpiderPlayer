@@ -19,6 +19,10 @@ import pafy
 
 
 def main_handler(event, context):
+    # query = event('queryStringParameters')
+    #静态资源
+    js = ['/js/ajax.js','/js/lyric.js','/js/musicList.js','/js/functions.js','/js/player.js','/js/jquery.mCustomScrollbar.concat.min.js','/js/background-blur.min.js']
+    css = ['/css/jquery.mCustomScrollbar.min.css','/css/player.css','/css/small.css']
     query = event['queryString']
     resp = Response()
     if('src' in query):
@@ -31,8 +35,16 @@ def main_handler(event, context):
     else:
         with open('./index.html') as f:
             html = f.read()
+        for j in js:
+            html = html.replace("${"+j+"}",read_statics(j))
+        for cs in css:
+            html = html.replace("${"+cs+"}",read_statics(cs))
         return resp.html(html)
 
+def read_statics(key):
+    with open('./cdn'+key) as f:
+        staticsstr = f.read()
+    return staticsstr
 
 def do_query(platform_obj, query):
     resp = Response()
@@ -48,6 +60,10 @@ def do_query(platform_obj, query):
     elif ('rc' in query):
         videos = platform_obj.get_recommendation()
         return resp.json(videos)
+    
+    elif('gd' in query):
+        playlist =  platform_obj.get_playlist(query['gd'])
+        return resp.json(playlist)
 
     else:
         return resp.error("暂无此功能")
@@ -117,7 +133,7 @@ class BiliBili:
             return []
 
     def get_playlist(self, pl):
-        return []
+        return {}
 
     # 秒转分秒
     def _sec2MinSec(self, sec):
@@ -144,7 +160,7 @@ class Youtube:
     def search_keyword(self, kw):
         #如果是一个播放列表链接，则提取listid
         if(len(re.findall(r'[&?]list=([^&]+)',kw))):
-            return self.get_playlist(re.findall(r'[&?]list=([^&]+)',kw)[0])
+            return self.get_playlist(re.findall(r'[&?]list=([^&]+)',kw)[0])['items']
         url = "https://m.youtube.com/results?search_query="+kw
         resp = requests.get(url)
         if resp.status_code == 200:
@@ -152,7 +168,6 @@ class Youtube:
                 r'ytInitialData = (.*);</script>', resp.text)[0]
             result_obj = json.loads(result_json)
             musiclist = []
-            
             kwIsList=True
             for i in result_obj['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']:
                 if "videoRenderer" in i:
@@ -177,21 +192,30 @@ class Youtube:
             dataStr = re.findall(reg, resp.text)[0]
             data = json.loads(dataStr)
             videos = []
-            for item in data['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'][0]['playlistVideoListRenderer']['contents']:
-                try:
+            playlist = {}
+            try:
+                for item in data['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'][0]['playlistVideoListRenderer']['contents']: 
                     item = item['playlistVideoRenderer']
                     id = item['videoId']
                     name = item['title']['runs'][0]['text']
                     duration = item['lengthText']['simpleText']
                     music = Music('youtube', id, "", name,
-                                  "", "", duration, "",'')
+                                "", "", duration, "",'')
                     videos.append(music.__dict__.copy())
-                except KeyError:
-                    pass
-            return videos
+                name = data['microformat']['microformatDataRenderer']['title']
+                cover_url = data['microformat']['microformatDataRenderer']['thumbnail']['thumbnails'][-1]['url']
+                cover = self._get_base64(cover_url)
+                creatername = data['sidebar']['playlistSidebarRenderer']['items'][-1]['playlistSidebarSecondaryInfoRenderer']['videoOwner']['videoOwnerRenderer']['title']['runs'][0]['text']
+                creatercover_url = data['sidebar']['playlistSidebarRenderer']['items'][-1]['playlistSidebarSecondaryInfoRenderer']['videoOwner']['videoOwnerRenderer']['thumbnail']['thumbnails'][-1]['url']
+                creatercover = self._get_base64(creatercover_url)
+                playlist=Playlist('youtube',listid,name,cover,creatername,creatercover,videos).__dict__
+            except KeyError:
+                    pass    
+            
+            return playlist
         else:
             print(resp.status_code)
-            return []
+            return {}
 
     def get_recommendation(self):
         return []
@@ -271,6 +295,18 @@ class Music:
         self.expire = expire
         self.lrc = lrc
 
+#歌单
+class Playlist:
+    def __init__(self,source,id,name,cover,creatername,creatercover,items):
+        self.source = source
+        self.name = name
+        self.id = id
+        self.cover = cover
+        self.creatername = creatername
+        self.creatercover = creatercover
+        self.items = items
+
+
 #响应类，返回一个http响应格式字典
 class Response:
     def error(self, msg):
@@ -296,4 +332,5 @@ class Response:
             "headers": {'Content-Type': 'application/json'},
             "body": json.dumps(jsonObj)
         }
+
 
