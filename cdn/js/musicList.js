@@ -68,77 +68,143 @@ var musicList = [
         creatorAvatar: "",      // 列表创建者头像(暂时没用到，可空)
         item: [                 // 这里面放歌曲
             {
-                id: "436514312",  // 音乐ID
-                name: "成都",  // 音乐名字
-                artist: "赵雷", // 艺术家名字
-                album: "成都",    // 专辑名字
-                source: "netease",     // 音乐来源
-                url_id: "436514312",  // 链接ID
-                pic_id: "2946691234868155",  // 封面ID
-                lyric_id: "436514312",  // 歌词ID
-                pic: "https://p3.music.126.net/34YW1QtKxJ_3YnX9ZzKhzw==/2946691234868155.jpg",    // 专辑图片
+                id: "s5FOS0rffn8",  // 音乐ID
+                name: "生生世世愛",  // 音乐名字
+                artist: "吳雨霏", // 艺术家名字
+                album: "Youtube",    // 专辑名字
+                source: "youtube",     // 音乐来源
+                url_id: "",  // 链接ID
+                pic_id: "",  // 封面ID
+                lyric_id: "",  // 歌词ID
+                pic: "",    // 专辑图片
                 url: ""   // mp3链接（此项建议不填，除非你有该歌曲的比较稳定的外链）
             },
             // 下面演示插入各个平台的音乐。。。
             {
-                id: "65528",
-                name: "淘汰",
-                artist: "陈奕迅",
-                album: "认了吧",
-                source: "netease",      // 网易云
-                url_id: "65528",
-                pic_id: "18782957139233959",
-                lyric_id: "65528",
-                pic: "https://p3.music.126.net/BFuOepLmD63tY75UJs1c0Q==/18872017579169120.jpg",
+                id: "VN8ZstX7_Vg",
+                name: "此生不换",
+                artist: "青鳥飛魚",
+                album: "Youtube",
+                source: "youtube",      
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
                 url: ""
             },
             {
-                id: "001JD1SR29d1hS",
-                name: "特别的爱给特别的你",
-                artist: "伍思凯",
-                album: "特别的爱给特别的你",
-                source: "tencent",      // 腾讯
-                url_id: "001JD1SR29d1hS",
-                pic_id: "004DYsvN2QCYcj",
-                lyric_id: "001JD1SR29d1hS",
-                pic: "https://y.gtimg.cn/music/photo_new/T002R300x300M000004DYsvN2QCYcj.jpg?max_age=2592000",
-                url: ""     // 腾讯的外链有效期较短，插入时 url [必须]设置空值，播放时再临时抓取
+                id: "BV1Rs411f7tJ",
+                name: "我的天空",
+                artist: "南征北战",
+                album: "Bilibili",
+                source: "bilibili",      
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""     
             },
             {
-                id: "81175",
-                name: "让我欢喜让我忧",
-                artist: "周华健",
-                album: "让我欢喜让我忧",
-                source: "xiami",    // 虾米
-                url_id: "81175",
-                pic_id: "81175",
-                lyric_id: "81175",
-                pic: "https://pic.xiami.net/images/album/img58/1258/66271400572139.jpg@300h_300w_100q_1c.jpg",
-                url: ""     // 虾米的外链有效期较短，插入时 url [必须]设置空值，播放时再临时抓取
+                id: "BV1Rx411g7w1",
+                name: "成都",
+                artist: "赵雷",
+                album: "Bilibili",
+                source: "bilibili",    // 虾米
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""     
             },
             {
-                id: "2a24dea6c74884195fe5b9732fd95ca8",
+                id: "BV1BW411h7rp",
                 name: "小幸运",
-                artist: "金玟岐",
-                album: "金玟岐翻唱作品集",
-                source: "kugou",        // 酷狗
-                url_id: "2a24dea6c74884195fe5b9732fd95ca8",
-                pic_id: "2a24dea6c74884195fe5b9732fd95ca8",
-                lyric_id: "2a24dea6c74884195fe5b9732fd95ca8",
-                pic: "http://singerimg.kugou.com/uploadpic/softhead/400/20161226/20161226105135733.jpg",
-                url: ""     // 酷狗的外链有效期较短，插入时 url [必须]设置空值，播放时再临时抓取
+                artist: "田馥甄",
+                album: "Bilibili",
+                source: "bilibili",       
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""    
             },
             {
-                id: "121004737",
-                name: "难忘今宵",
-                artist: "李谷一",
-                album: "难忘今宵",
-                source: "baidu",        // 百度
-                url_id: "121004737",
-                pic_id: "121004737",
-                lyric_id: "121004737",
-                pic: "http://musicdata.baidu.com/data2/pic/2733cd9816b8618afd3038d5d9444940/266105319/266105319.jpg@s_0,w_150",
-                url: ""         // 百度的外链有效期较短，插入时 url [必须]设置空值，播放时再临时抓取
+                id: "BV1hs411D74w",
+                name: "走在冷风中",
+                artist: "刘思涵",
+                album: "Bilibili",
+                source: "bilibili",        
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""        
+            },{
+                id: "BV12W411a7sU",
+                name: "恋爱循环",
+                artist: "花泽香菜",
+                album: "Bilibili",
+                source: "bilibili",       
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""         
+            },{
+                id: "BV1Ft411C7b7",
+                name: "素颜",
+                artist: "许嵩",
+                album: "Bilibili",
+                source: "bilibili",        
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""        
+            },{
+                id: "BV1sJ41127wK",
+                name: "父亲写的散文诗",
+                artist: "许飞",
+                album: "Bilibili",
+                source: "bilibili",        
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""        
+            },{
+                id: "BV1G7411o7qe",
+                name: "美丽的神话",
+                artist: "成龙、金喜善",
+                album: "Bilibili",
+                source: "bilibili",        
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""        
+            },{
+                id: "BV1tx411p7hy",
+                name: "稻香",
+                artist: "周杰伦",
+                album: "Bilibili",
+                source: "bilibili",       
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""     
+            },{
+                id: "BV1ST4y1N7YP",
+                name: "青鸟",
+                artist: "生物股长",
+                album: "Bilibili",
+                source: "bilibili",       
+                url_id: "",
+                pic_id: "",
+                lyric_id: "",
+                pic: "",
+                url: ""        
             }  // 列表中最后一首歌大括号后面不要加逗号
         ]
     }
