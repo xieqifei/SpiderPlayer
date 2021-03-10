@@ -17,6 +17,7 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 ### v2.0
 
 1. 在MKOnlineMusicPlayer的UI基础上更新功能
+2. 修复白色背景虚化后，文字不清晰问题
 
 ### v1.1
 
