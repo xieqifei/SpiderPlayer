@@ -3,7 +3,9 @@ from .base import Music,Playlist,Userlist
 import json
 
 class QQMusic:
-    cookie = 'pgv_pvi=8608630784; RK=UKpl0yStED; ptcz=fbb88170fafd2ed95d5d3b653c7f180d5d916823e72e04a44454e12fc0772bb7; tvfe_boss_uuid=41ec9918a7abd703; eas_sid=T1q5E9j7O1B5K7i5O1b9U8f162; ied_qq=o0975322731; pac_uid=1_975322731; iip=0; _ga=GA1.2.984015091.1601553199; ts_uid=7486175980; pgv_pvid=5602168404; fqm_pvqid=955e6bfd-c610-4384-b3c0-0afef3ae4b61; pgv_info=ssid=s257455772; userAction=1; _qpsvr_localtk=0.8074091033690896; euin=NKSkoi-A7io5; tmeLoginType=2; ts_refer=www.google.com/; yqq_stat=0; ts_last=y.qq.com/portal/profile.html; psrf_qqaccess_token=BD8A28A11DF77AD5905C5428ADF9F8C3; psrf_qqunionid=; qm_keyst=Q_H_L_2m0WA160eaxm3LzECdv3z_BX0Zt3qVJRER9gaSMYSvK6Tyfxge0_8pRSj-xYah8; psrf_qqrefresh_token=E8EAB1E0F4135D94809D75593B5F0333; qqmusic_key=Q_H_L_2m0WA160eaxm3LzECdv3z_BX0Zt3qVJRER9gaSMYSvK6Tyfxge0_8pRSj-xYah8; uin=975322731; psrf_access_token_expiresAt=1623271180; psrf_musickey_createtime=1615495180; psrf_qqopenid=E9376778794A0D6CB151A392F60AB3A2'
+
+    cookie = ''
+    
     #官方的请求地址，香港以及海外服务器无法请求
     # def get_music(self,id):
     #     baseUrl = r'https://u.y.qq.com/cgi-bin/musicu.fcg?format=json'
@@ -98,6 +100,7 @@ class QQMusic:
         return cover
    
     #通过qq号搜索用户歌单
+    #此功能要实现，必须提供qq音乐cookie
     def get_userlist(self,qq):
         baseUrl = 'https://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg?format=json&cid=205360838&userid='+qq+'&reqfrom=1'
         header = {'cookie':self.cookie}
