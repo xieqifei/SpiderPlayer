@@ -18,9 +18,11 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 
 1. 在MKOnlineMusicPlayer的UI基础上更新功能
 2. 修复白色背景虚化后，文字不清晰问题
-3. 支持添加youtube播放列表为歌单
+3. 支持添加youtube播放列表到歌单
 4. 保存新添加的歌单到本地
 5. 图片转base64，js、css静态资源替换到html代码中
+6. 支持添加bilibili播放列表到歌单
+7. 修复由于base64图片本地缓存导致浏览器容量超标
 
 ### v1.1
 
@@ -124,6 +126,10 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 ![image-20210227130224442](https://i.loli.net/2021/02/27/JdMT3tVX8fIkjue.png)
 
 保存后即可使用短域名访问你的网站了
+
+## 2.3 自定义
+
+自定义默认歌单，修改和说明都在`/cdn/js/musicList.js`中
 
 # 3：开发说明
 

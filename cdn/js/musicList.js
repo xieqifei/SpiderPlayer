@@ -60,6 +60,9 @@ var musicList = [
     // 方式一：手动创建列表并添加歌曲信息
     // 温馨提示：各大音乐平台获取到的外链有效期均较短，因此 url 值应该设置为空，以让程序临时抓取
     {
+        source:'bilibili',
+        id:'BV1k7411k79Q'
+    },{
         name: "自定义列表",   // 播放列表名字
         cover: "https://p3.music.126.net/34YW1QtKxJ_3YnX9ZzKhzw==/2946691234868155.jpg", // 播放列表封面图像
         creatorName: "",        // 列表创建者名字(暂时没用到，可空)

@@ -327,7 +327,7 @@ function playlistSubmit(){
 }
 //将添加的音乐歌单添加到localstorage
 function pushPLintoLocal(src,listid){
-    var addedlists = playerReaddata('addedlists');
+    var addedlists = playerReaddata('addedlists')?playerReaddata('addedlists'):[];
     addedlists.push({'source':src,'id':listid});
     playerSavedata('addedlists',addedlists);
 }
@@ -822,7 +822,23 @@ function addHis(music) {
     // 再放到第一位
     musicList[2].item.unshift(music);
     
-    playerSavedata('his', musicList[2].item);  // 保存播放历史列表
+    //由于浏览器本地储存限制
+    //不保存音乐的图片，pic有可能不是url而是base64格式文件
+    //清除url，为了再次播放时重新加载图片
+    var items = musicList[2].item
+    for( i in items){
+        if(i != 0){
+            items[i].pic=null;
+            items[i].url=null;
+        }
+        
+        //如果播放列表超过60，则删除超过60的歌曲信息
+        //否则将无法添加新歌曲到播放列表
+        if(i>60){
+            items.splice(i,1);
+        }
+    }
+    playerSavedata('his', items);  // 保存播放历史列表
 }
 
 // 初始化播放列表
