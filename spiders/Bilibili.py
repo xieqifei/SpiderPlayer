@@ -50,7 +50,7 @@ class BiliBili:
             parse = urlparse(url)
             query = parse_qs(parse.query)
             music = Music("bilibili", bv, url, name, artist,
-                          cover, duration, ''.join(query['deadline']),'')
+                          cover, duration, ''.join(query['deadline']))
             return music.__dict__
 
     
@@ -72,7 +72,7 @@ class BiliBili:
                 duration = video_dom[i].a.find(
                     "span", {"class": "so-imgTag_rb"}).string
                 name = video_dom[i].a['title']
-                music = Music('bilibili', bv, "", name, "", "", duration, "",'')
+                music = Music('bilibili', bv, "", name, "", "", duration, "",albumname='')
                 videos.append(music.__dict__.copy())
             return videos
         else:
@@ -97,7 +97,7 @@ class BiliBili:
                 name = data[i]['title']
                 duration = self._sec2MinSec(data[i]['duration'])
                 id = data[i]['bvid']
-                music = Music('bilibili', id, '', name, '', '', duration, '','')
+                music = Music('bilibili', id, '', name, '', '', duration, '')
                 videos.append(music.__dict__.copy())
             return videos
         else:
@@ -113,7 +113,7 @@ class BiliBili:
         rep = requests.get(videourl)
         playlist = {}
         if (rep.status_code == 200):
-            # try:
+            try:
                 jsonstr = re.findall(r'<script>window.__INITIAL_STATE__=(.*?);\(function\(\){',rep.text)[0]
                 data = json.loads(jsonstr)['videoData']
                 id = data['bvid']
@@ -125,12 +125,12 @@ class BiliBili:
                 name = data['title']
                 items = []
                 for item in data['pages']:
-                    music = Music('bilibili',id+str(item['page']),'',item['part'],creatername,'',str(item['duration']),'','')
+                    music = Music('bilibili',id+str(item['page']),'',item['part'],creatername,'',str(item['duration']),'')
                     items.append(music.__dict__)
                 playlist = Playlist('bilibili',id,name,cover,creatername,creatrecover,items).__dict__
                 
-            # except Exception:
-            #     pass
+            except Exception:
+                pass
         return playlist
 
     # 秒转分秒
@@ -146,3 +146,6 @@ class BiliBili:
         img_bytes = base64.b64encode(BytesIO(resp.content).read())
         img_str = img_bytes.decode()
         return 'data:image/'+os.path.basename(img_url)+';base64,'+img_str
+
+    def get_lyric(self,id):
+        return {}

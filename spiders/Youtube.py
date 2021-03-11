@@ -15,7 +15,7 @@ class Youtube:
         parse = urlparse(video.audiostreams[-1].url)
         query = parse_qs(parse.query)
         music = Music("youtube", id, video.audiostreams[-1].url, video.title,
-                      video.author, self._get_base64(video.thumb), video.duration, ''.join(query['expire']),'')
+                      video.author, self._get_base64(video.thumb), video.duration, ''.join(query['expire']))
         return music.__dict__
 
     def search_keyword(self, kw):
@@ -35,7 +35,7 @@ class Youtube:
                     kwIsList=False
                     item = i["videoRenderer"]
                     musicBuffer = Music('youtube', item['videoId'], "", item['title']['runs'][0]['text'],
-                                        item['ownerText']['runs'][0]['text'], "", item['lengthText']['simpleText'], "",'')
+                                        item['ownerText']['runs'][0]['text'], "", item['lengthText']['simpleText'], "",albumname='')
                     musiclist.append(musicBuffer.__dict__.copy())
                 #如果是listid
                 elif "playlistRenderer" in i and kwIsList:
@@ -61,7 +61,7 @@ class Youtube:
                     name = item['title']['runs'][0]['text']
                     duration = item['lengthText']['simpleText']
                     music = Music('youtube', id, "", name,
-                                "", "", duration, "",'')
+                                "", "", duration, "")
                     videos.append(music.__dict__.copy())
                 name = data['microformat']['microformatDataRenderer']['title']
                 cover_url = data['microformat']['microformatDataRenderer']['thumbnail']['thumbnails'][-1]['url']
@@ -87,3 +87,5 @@ class Youtube:
         img_str = img_bytes.decode()
         return 'data:image/'+os.path.basename(img_url)+';base64,'+img_str
 
+    def get_lyric(self,id):
+        return {}

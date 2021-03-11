@@ -14,6 +14,14 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 
 ## 更新：
 
+### v2.1
+
+1. 添加QQ音乐支持
+2. 支持添加QQ音乐歌单
+3. QQ音乐图片http改为https
+4. 修复qq音乐歌单音乐播放时图片不显示问题
+5. 支持同步qq歌单
+
 ### v2.0
 
 1. 在MKOnlineMusicPlayer的UI基础上更新功能
@@ -49,7 +57,6 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 5. 支持退出重进后，自动加载上次的播放列表
 6. 支持搜索Youtube播放列表id和播放列表链接
 
-4. 
 
 # 2：部署说明
 
@@ -95,7 +102,7 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 
 这个网址是否太冗长了？现在添加自定义域名
 
-## 2.2 自定义域名
+## 2.2 域名设置
 
 需要你自己购买了域名，任何域名都可以。无需备案。
 
@@ -129,7 +136,33 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 
 ## 2.3 自定义
 
-自定义默认歌单，修改和说明都在`/cdn/js/musicList.js`中
+### 2.3.1 自定义默认歌单
+
+修改和说明都在`/cdn/js/musicList.js`中
+
+### 2.3.2 QQ歌单同步
+
+qq歌单同步需要修改qq音乐的cookie。
+
+1. 获取cookie
+
+- 登录网页版qq音乐，https://y.qq.com/portal/profile.html 
+- 在网页里按下`F12`，打开浏览器开发者工具箱
+- 点击`console`，输入`document.cookie`回车
+
+![image-20210312000727375](https://i.loli.net/2021/03/12/zKPN1FoLgCVj9kU.png)
+
+如图红色字体为qq登录cookie
+
+- 复制红色字体部分，不包含红色字体外的双引号。
+- 修改`spiders/QQMusic.py`里的`cookie =""`为复制的cookie。
+- 保存后重新上传到云函数
+
+2. 同步歌单
+
+当cookie设置成功后，在网页 `播放列表`->`点击同步`，输入任意qq号就可以同步qq歌单了。
+
+这里之所以要设置cookie，是因为搜索一个qq的歌单的api，必须使用登录的qq音乐账号才能使用。
 
 # 3：开发说明
 
@@ -166,6 +199,12 @@ api请求示例：
 > duration：时长
 >
 > expire：音乐url有效时间戳
+>
+> 以下参数为不一定携带
+>
+> albummid：id
+>
+> albumname：专辑名称
 
 - 参数为`kw=搜索关键词`，返回搜索结果
 
@@ -183,7 +222,7 @@ api请求示例：
 
 - 参数为`id=视频id`时，返回该视频对应的音频播放链接。
 
-视频id必须和id来源一一对应。bilibili的id和youtubeid不能混用。
+视频id必须和id来源一一对应。bilibili的id和youtube id不能混用。
 
 api请求示例：
 
@@ -192,12 +231,56 @@ api请求示例：
 返回一个json字典：
 
 ```json
-{"source": "bilibili", "url": "https://upos-hz-mirrorakam.akamaized.net/upgcxcode/32/69/288886932/288886932-1-30232.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1614786149&gen=playurlv2&os=akam&oi=2179117609&trid=1dbccebd1b4c44569ca99e388c8df8bdu&platform=pc&upsig=445e87297a7e81f8f135b49826cc1c0d&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,platform&hdnts=exp=1614786149~hmac=68112df0a94503e32ceac091400fc1a57f6c6beb719ba797a2bf53278875469e&mid=0&orderid=0,1&agrr=0&logo=80000000", "name": "\u3010\u5fc3\u534e\u7ffb\u5531\u3011\u660e\u5929\u4f60\u597d\uff08cover\uff1a\u725b\u5976\u5496\u5561\uff09", "artist": "\u7687\u752b\u9dc7", "cover": "data:image/48ad11d1d8a1e8f46cc8924a7db09c83df186411.jpg;base64,/9j/4AAQS~~省略若干~~wUV//Z", "id": "BV1hX4y1N7b1", "duration": "", "expire": "1614786149"}
+{"source": "bilibili", "url": "https://", "name": "\u3010\u5fc3\u534e", "artist": "\u7687\u752b\u9dc7", "cover": "data:image/b09c83df186411.jpg;base64,/9j/4AAQS~~省略若干~~wUV//Z", "id": "BV1hX4y1N7b1", "duration": "", "expire": "1614786149"}
 ```
 
 > url：音乐播放链接，链接在expire时间戳对应时间到后失效。
 >
-> cover：base64编码的up主头像图片。由于图像设有防盗链，直接传图像地址img标签无法加载，而且云函数无法返回文件(二进制代码)，因此通过python程序直接将图像资源转为base64编码格式的字符串。此字符串添加到img标签的src中可以直接显示
+> cover：音乐封面，图片如果有防盗链，会返回一个base64编码的字符串，可直接放入img标签src展示。
+
+- 参数为`gd=歌单id`时，返回歌单
+
+api示例：
+
+> http://y.sci.ci/?src=qqmusic&gd=7586058175
+
+返回json字典
+
+```json
+{"source": "qqmusic", "name": "\u674e\u8363\u6d69", "id": "7586058175", "cover": "https://y.gtimg.cn/mediastyle/global/img/cover_playlist.png?max_age=31536000", "creatername": "\u8bf7\u03b7!", "creatercover": "", "items": [{"source": "qqmusic", "url": "", "name": "Victory", "artist": "Two Steps From Hell", "cover": "https://y.gtimg.cn/music/photo_new/T002R180x180M000002hKKCC1LSc8y.jpg", "id": "001xfrlS0fYS3z", "duration": "", "expire": ""}]}
+```
+
+> items：一个列表，每个元素都是一个歌曲信息的字典。
+
+- 参数`lrc=歌曲id`，返回歌词
+
+api示例：
+
+> http://y.sci.ci/?src=qqmusic&lyc=001xfrlS0fYS3z
+
+返回json字典
+
+```json
+{"source": "qqmusic", "id": "001xfrlS0fYS3z", "lyric": "[ti:Victory]\n[ar:Two Steps From Hell/Thomas Bergersen]\n[al:Battlecry]\n[by:]\n[offset:0]\n[00:00.00]Victory - Two Steps From Hell (\u4e24\u6b65\u9003\u79bb\u5730\u72f1)/Thomas Bergersen\n[01:20.65]\n[02:41.30]From far away\n[02:43.30]In mountains deep\n[02:45.22]The night of blood\n[02:47.23]In twilight sleep\n[02:49.22]The armies fight\n[02:51.23]For king and queen\n[02:53.24]There will be no\n[02:55.24]No victory\n[02:57.21]The swords collide\n[02:59.30]With power and force\n[03:01.27]As mighty men\n[03:03.26]Show no remorse\n[03:05.26]It is the time\n[03:07.30]The snow is melting\n[03:09.29]It is the time\n[03:11.31]Of reckoning\n[04:17.23]From far away\n[04:19.30]In mountains deep\n[04:21.22]The night of blood\n[04:23.19]In twilight sleep\n[04:25.17]The armies fight\n[04:27.21]For king and queen\n[04:29.21]There will be no\n[04:31.23]No victory\n[04:33.20]The swords collide\n[04:35.27]With power and force\n[04:37.22]As mighty men\n[04:39.25]Show no remorse\n[04:41.21]It is the time\n[04:43.33]The snow is melting\n[04:45.27]It is the time\n[04:47.17]Of reckoning"}
+```
+
+- 参数`uid=用户id`，返回此用户下的歌单信息
+
+api示例：
+
+> http://y.sci.ci/?src=qqmusic&uid=975322731
+
+返回用户歌单json字典
+
+```
+{"code": 200, "source": "qqmusic", "uid": "975322731", "creatername": "i can fly", "creatercover": "http://thirdqq.qlogo.cn/g?b=sdk&k=P2k08LYcEYMGx5cqmcJzpQ&s=140&t=1592120904", "playlist": [{"source": "qqmusic", "name": "\u70ed\u6b4c", "id": 7861873582, "cover": "", "creatername": "", "creatercover": "", "items": []}, {"source": "qqmusic", "name": "90\u540e\u56de\u5fc6\u7684\u6b4c", "id": 7737241062, "cover": "", "creatername": "", "creatercover": "", "items": []}]}
+```
+
+> code：200表示获取成功，没有或者其他的表示失败
+>
+> uid：用户id，比如qq号
+>
+> playlist：一个列表，其中每个元素是一个歌单，歌单字典的格式，见参数为gd时的请求结果说明
 
 - 参数错误，或者无参数
 

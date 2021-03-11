@@ -10,6 +10,7 @@
 import json
 from spiders.Bilibili import BiliBili
 from spiders.Youtube import Youtube
+from spiders.QQMusic import QQMusic
 
 def main_handler(event, context):
     # query = event('queryStringParameters')
@@ -30,6 +31,8 @@ def main_handler(event, context):
             return do_query(BiliBili(), query)
         elif (query['src'] == 'youtube'):   #请求资源为youtube
             return do_query(Youtube(), query)
+        elif (query['src']=='qqmusic'):
+            return do_query(QQMusic(),query)
         else:
             return resp.error("请求出错，无此源")
     else:
@@ -72,6 +75,14 @@ def do_query(platform_obj, query):
     elif('gd' in query):
         playlist =  platform_obj.get_playlist(query['gd'])
         return resp.json(playlist)
+    
+    elif('lrc' in query):
+        lyric = platform_obj.get_lyric(query['lrc'])
+        return resp.json(lyric)
+    
+    elif('uid' in query):
+        userlist = platform_obj.get_userlist(query['uid'])
+        return resp.json(userlist)
 
     #上述参数未被包含，返回错误响应
     else:
@@ -104,3 +115,4 @@ class Response:
             "headers": {'Content-Type': 'application/json'},
             "body": json.dumps(jsonObj)
         }
+

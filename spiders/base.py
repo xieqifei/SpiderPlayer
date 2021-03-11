@@ -1,5 +1,5 @@
 class Music:
-    def __init__(self, source, id, url, name, artist, cover, duration, expire,lrc):
+    def __init__(self, source, id, url, name, artist, cover, duration, expire,**kv):
         self.source = source
         self.url = url
         self.name = name
@@ -8,7 +8,9 @@ class Music:
         self.id = id
         self.duration = duration
         self.expire = expire
-        self.lrc = lrc
+        for k,v in kv.items():
+            setattr(self, k, v)
+
 
 #歌单
 class Playlist:
@@ -21,3 +23,11 @@ class Playlist:
         self.creatercover = creatercover
         self.items = items
 
+class Userlist:
+    def __init__(self,source,code,uid,creatername,creatercover,playlist) -> None:
+        self.code = code 
+        self.source = source
+        self.uid = uid
+        self.creatername = creatername
+        self.creatercover = creatercover
+        self.playlist = playlist

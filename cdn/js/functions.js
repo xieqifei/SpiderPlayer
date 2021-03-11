@@ -159,34 +159,57 @@ $(function(){
     
     // 点击同步云音乐
     $("#sheet").on("click",".login-in", function() {
-        layer.prompt(
-        {
-            title: '请输入您的网易云 UID',
-            // value: '',  // 默认值
-            btn: ['确定', '取消', '帮助'],
-            btn3: function(index, layero){
-                layer.open({
-                    title: '如何获取您的网易云UID？'
-                    ,shade: 0.6 //遮罩透明度
-                    ,anim: 0 //0-6的动画形式，-1不开启
-                    ,content: 
-                    '1、首先<a href="http://music.163.com/" target="_blank">点我(http://music.163.com/)</a>打开网易云音乐官网<br>' +
-                    '2、然后点击页面右上角的“登录”，登录您的账号<br>' + 
-                    '3、点击您的头像，进入个人中心<br>' + 
-                    '4、此时<span style="color:red">浏览器地址栏</span> <span style="color: green">/user/home?id=</span> 后面的<span style="color:red">数字</span>就是您的网易云 UID'
-                });  
+        var tmpHtml = '<form onsubmit="return userlistSubmit()"><div id="search-area">' + 
+        '    <div class="search-group">' + 
+        '        <input type="text" name="uid" id="uid" placeholder="请输入用户号码" autofocus required>' + 
+        '        <button class="search-submit" type="submit">添加</button>' + 
+        '    </div>' + 
+        '    <div class="radio-group" id="list-source">' + 
+        '       <label><input type="radio" name="source" value="qqmusic" checked=""> QQ号</label>' + 
+        // '       <label><input type="radio" name="source" value="youtube" > Youtube</label>' + 
+        // '       <label><input type="radio" name="source" value="bilibili"> B站</label>' + 
+        '   </div>' + 
+        '</div></form>';
+        layer.open({
+            type: 1,
+            shade: false,
+            title: false, // 不显示标题
+            shade: 0.5,    // 遮罩颜色深度
+            shadeClose: true,
+            content: tmpHtml,
+            cancel: function(){
             }
-        },
-        function(val, index){   // 输入后的回调函数
-            if(isNaN(val)) {
-                layer.msg('uid 只能是数字',{anim: 6});
-                return false;
-            }
-            layer.close(index);     // 关闭输入框
-            ajaxUserList(val);
         });
+
+        // layer.prompt(
+        // {
+        //     title: '请输入您的网易云 UID',
+        //     // value: '',  // 默认值
+        //     btn: ['确定', '取消', '帮助'],
+        //     btn3: function(index, layero){
+        //         layer.open({
+        //             title: '如何获取您的网易云UID？'
+        //             ,shade: 0.6 //遮罩透明度
+        //             ,anim: 0 //0-6的动画形式，-1不开启
+        //             ,content: 
+        //             '1、首先<a href="http://music.163.com/" target="_blank">点我(http://music.163.com/)</a>打开网易云音乐官网<br>' +
+        //             '2、然后点击页面右上角的“登录”，登录您的账号<br>' + 
+        //             '3、点击您的头像，进入个人中心<br>' + 
+        //             '4、此时<span style="color:red">浏览器地址栏</span> <span style="color: green">/user/home?id=</span> 后面的<span style="color:red">数字</span>就是您的网易云 UID'
+        //         });  
+        //     }
+        // },
+        // function(val, index){   // 输入后的回调函数
+        //     if(isNaN(val)) {
+        //         layer.msg('uid 只能是数字',{anim: 6});
+        //         return false;
+        //     }
+        //     layer.close(index);     // 关闭输入框
+        //     ajaxUserList('qqmusic',val);
+        // });
     });
 
+    
 
     //点击添加播放列表
     $("#sheet").on("click","#add-playlist",function (){
@@ -197,7 +220,8 @@ $(function(){
         '        <button class="search-submit" type="submit">添加</button>' + 
         '    </div>' + 
         '    <div class="radio-group" id="list-source">' + 
-        '       <label><input type="radio" name="source" value="youtube" checked=""> Youtube</label>' + 
+        '       <label><input type="radio" name="source" value="qqmusic" checked=""> QQ音乐</label>' + 
+        '       <label><input type="radio" name="source" value="youtube" > Youtube</label>' + 
         '       <label><input type="radio" name="source" value="bilibili"> B站</label>' + 
         '   </div>' + 
         '</div></form>';
@@ -325,6 +349,25 @@ function playlistSubmit(){
     layer.closeAll('page');     // 关闭搜索框
     return false;
 }
+
+//提交uid搜索
+function userlistSubmit(){
+    var uid = $("#uid").val();
+    if(!uid) {
+        layer.msg('用户id不能为空', {anim:6, offset: 't'});
+        $("#uid").focus();
+        return false;
+    }
+    source = $("#list-source input[name='source']:checked").val();
+    if(isNaN(uid)) {
+        layer.msg('uid 只能是数字',{anim: 6});
+        return false;
+    }
+    ajaxUserList(source,uid);
+    layer.closeAll('page');     // 关闭搜索框
+    return false;
+}
+
 //将添加的音乐歌单添加到localstorage
 function pushPLintoLocal(src,listid){
     var addedlists = playerReaddata('addedlists')?playerReaddata('addedlists'):[];
@@ -378,8 +421,10 @@ function searchBox() {
     '        <button class="search-submit" type="submit">搜 索</button>' + 
     '    </div>' + 
     '    <div class="radio-group" id="music-source">' + 
-    '       <label><input type="radio" name="source" value="youtube" checked=""> Youtube</label>' + 
+    '       <label><input type="radio" name="source" value="qqmusic" checked=""> QQ音乐</label>' + 
+    '       <label><input type="radio" name="source" value="youtube"> Youtube</label>' + 
     '       <label><input type="radio" name="source" value="bilibili"> B站</label>' + 
+    
     '   </div>' + 
     '</div></form>';
     layer.open({
@@ -823,13 +868,17 @@ function addHis(music) {
     musicList[2].item.unshift(music);
     
     //由于浏览器本地储存限制
-    //不保存音乐的图片，pic有可能不是url而是base64格式文件
+    //判断图片字符串大小，如果大于200，说明不是链接而是base64编码的图片
     //清除url，为了再次播放时重新加载图片
     var items = musicList[2].item
     for( i in items){
-        if(i != 0){
-            items[i].pic=null;
-            items[i].url=null;
+        if(i != 0 && items[i].pic){
+            //pic不为null才能使用.length
+            if(items[i].pic.length>200){
+                items[i].pic=null;
+                items[i].url=null;
+            }
+            
         }
         
         //如果播放列表超过60，则删除超过60的歌曲信息
@@ -908,7 +957,7 @@ function initList() {
     
     // 登陆了，但歌单又没有，说明是在刷新歌单
     if(playerReaddata('uid') && !tmp_ulist) {
-        ajaxUserList(rem.uid);
+        ajaxUserList('qqmusic',rem.uid);
         return true;
     }
     
