@@ -8,9 +8,7 @@
 '''
 
 import json
-from spiders.Bilibili import BiliBili
-from spiders.Youtube import Youtube
-from spiders.QQMusic import QQMusic
+import spiders as api
 
 def main_handler(event, context):
     # query = event('queryStringParameters')
@@ -20,19 +18,26 @@ def main_handler(event, context):
     
     #获取get请求的参数
     query = event['queryString']
-
     #新建一个响应对象
     resp = Response()
 
+    #新建api对象
+    bili = api.BiliBili()
+    ytb = api.Youtube()
+    qqm = api.QQMusic()
+
+    #设置qq音乐cookie，没有cookie输入qq同步歌单功能无法使用
+    qqm.set_cookie('')
+    
     #src为请求必填参数
     if('src' in query):
         
         if(query['src'] == 'bilibili'): #请求资源为bilibili
-            return do_query(BiliBili(), query)
+            return do_query(bili, query)
         elif (query['src'] == 'youtube'):   #请求资源为youtube
-            return do_query(Youtube(), query)
+            return do_query(ytb, query)
         elif (query['src']=='qqmusic'):
-            return do_query(QQMusic(),query)
+            return do_query(qqm,query)
         else:
             return resp.error("请求出错，无此源")
     else:
@@ -46,13 +51,13 @@ def main_handler(event, context):
             html = html.replace("${"+cs+"}",read_statics(cs))
         return resp.html(html)
 
-#读取jscss等静态文件为字符串
+#读取jscss等静态文件为字符串，参数key 静态资源路径
 def read_statics(key):
     with open('./cdn'+key) as f:
         staticsstr = f.read()
     return staticsstr
 
-#根据请求参数，对指定平台进行操作
+#根据请求参数，对指定平台进行操作， 参数platform_obj 平台的一个对象，query 请求参数字典
 def do_query(platform_obj, query):
     resp = Response()
     #关键词搜索

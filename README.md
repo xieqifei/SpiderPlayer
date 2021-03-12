@@ -155,7 +155,7 @@ qq歌单同步需要修改qq音乐的cookie。
 如图红色字体为qq登录cookie
 
 - 复制红色字体部分，不包含红色字体外的双引号。
-- 修改`spiders/QQMusic.py`里的`cookie =""`为复制的cookie。
+- 将复制的cookie粘贴到`index.py`中`qqm.set_cookie('')`部分。
 - 保存后重新上传到云函数
 
 2. 同步歌单

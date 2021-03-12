@@ -1,6 +1,5 @@
 import requests
 from .base import Music,Playlist,Userlist
-import json
 
 class QQMusic:
 
@@ -98,7 +97,11 @@ class QQMusic:
     def get_pic(self,albummid):
         cover = 'https://y.gtimg.cn/music/photo_new/T002R180x180M000'+albummid+'.jpg'
         return cover
-   
+    
+    #设置cookie
+    def set_cookie(self,cookie):
+       self.cookie = cookie
+
     #通过qq号搜索用户歌单
     #此功能要实现，必须提供qq音乐cookie
     def get_userlist(self,qq):
