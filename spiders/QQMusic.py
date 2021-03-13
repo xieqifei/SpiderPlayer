@@ -1,9 +1,15 @@
 import requests
-from .base import Music,Playlist,Userlist
+from requests.api import head
+from .base import MVideo, Music,Playlist,Userlist
+import json
 
 class QQMusic:
 
     cookie = ''
+    source = 'qqmusic'
+
+    def __init__(self) -> None:
+        self.cookie = self.get_cookie()
     
     #官方的请求地址，香港以及海外服务器无法请求
     # def get_music(self,id):
@@ -18,22 +24,35 @@ class QQMusic:
     #                 url = music_data['sip'][0]+music_data['midurlinfo'][0]['purl']
     #             else:
     #                 url = ''
-    #             m = Music('qqmusic',id,url,'','','','','').__dict__
+    #             m = Music(self.source,id,url,'','','','','').__dict__
     #         except:
     #             pass
     #     return m
     
-    #非官方api，在网上找的一个api
+    #非官方api，api来自api.zsfmyz.top
     def get_music(self,id):
         baseUrl = 'https://api.zsfmyz.top/music/song?songmid='+id+'&guid=126548448'
         resp = requests.get(baseUrl)
         m={}
         if (resp.status_code==200):
             try:
-                m = Music('qqmusic',id,resp.json()['data']['musicUrl'],'','','','','').__dict__
+                m = Music(self.source,id,resp.json()['data']['musicUrl'],'','','','','').__dict__
             except Exception:
                 pass
         return m
+    
+    
+    # #非官方api，api来自api.qq.jsososo.com
+    # def get_music(self,id):
+    #     baseUrl = 'https://api.qq.jsososo.com/song/urls?id='+id
+    #     resp = requests.get(baseUrl)
+    #     m={}
+    #     if (resp.status_code==200):
+    #         try:
+    #             m = Music(self.source,id,resp.json()['data'][id],'','','','','').__dict__
+    #         except Exception:
+    #             pass
+    #     return m
         
     def search_keyword(self,kw):
         baseUrl = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?p=1&n=30&w="+kw+"&format=json"
@@ -45,7 +64,7 @@ class QQMusic:
                 for music in musics:
                     if(music['isonly']==0):
                         cover = self.get_pic(music['albummid'])
-                        m = Music('qqmusic',music['songmid'],'',music['songname'],music['singer'][0]['name'],cover,self._sec2MinSec(music['interval']),'',albummid=music['albummid'],albumname = music['albumname'],)
+                        m = Music(self.source,music['songmid'],'',music['songname'],music['singer'][0]['name'],cover,self._sec2MinSec(music['interval']),'',albummid=music['albummid'],albumname = music['albumname'],songid=music['songid'])
                         musiclist.append(m.__dict__.copy())
             except:
                 pass
@@ -74,9 +93,10 @@ class QQMusic:
                         name = music['name']
                         artist = music['singer'][0]['name']
                         cover = self.get_pic(music['album']['mid'])
-                        m = Music('qqmusic',mid,'',name,artist,cover,'','').__dict__
+                        songid = music['id']
+                        m = Music(self.source,mid,'',name,artist,cover,'','',songid=songid).__dict__
                         musics.append(m.copy())
-                playlist = Playlist('qqmusic',id,pl_name,pl_cover,creatername,creatercover,musics).__dict__
+                playlist = Playlist(self.source,id,pl_name,pl_cover,creatername,creatercover,musics).__dict__
             except Exception:
                 pass
         return playlist
@@ -91,7 +111,7 @@ class QQMusic:
                 lyric = resp.json()['lyric']
             except:
                 pass
-        return {'source':'qqmusic','id':id,'lyric':lyric}
+        return {'source':self.source,'id':id,'lyric':lyric}
 
     #获取专辑图片
     def get_pic(self,albummid):
@@ -101,6 +121,19 @@ class QQMusic:
     #设置cookie
     def set_cookie(self,cookie):
        self.cookie = cookie
+
+    #获取cookie，cookie来自网络公用
+    def get_cookie(self):
+        baseUrl = 'https://api.qq.jsososo.com/user/cookie'
+        resp = requests.get(baseUrl)
+        cookie = ''
+        if(resp.status_code == 200):
+            try:
+                cookie = json.dumps(resp.json()['data']['userCookie'])
+            except Exception:
+                pass
+        
+        return cookie
 
     #通过qq号搜索用户歌单
     #此功能要实现，必须提供qq音乐cookie
@@ -118,8 +151,38 @@ class QQMusic:
                 for pl in data['mydiss']['list']:
                     pid = pl['dissid']
                     pname = pl['title']
-                    playlist.append(Playlist('qqmusic',pid,pname,'','','',[]).__dict__.copy())
-                userlist = Userlist('qqmusic',200,qq,creatername,creatercover,playlist).__dict__
+                    playlist.append(Playlist(self.source,pid,pname,'','','',[]).__dict__.copy())
+                userlist = Userlist(self.source,200,qq,creatername,creatercover,playlist).__dict__
             except Exception:
                 pass
         return userlist
+    
+    #获取相关mv，参数 songid qq音乐id
+    #非官方接口
+    def get_mv_info(self,songid):
+        baseUrl = "https://api.qq.jsososo.com/song/mv?id="+songid
+        header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36'}
+        resp = requests.get(baseUrl,headers=header)
+        videos = []
+        if(resp.status_code ==200):
+            try:
+                for item in resp.json()['data']:
+                    video = MVideo(self.source,item['vid'],item['title'],[],item['picurl']).__dict__
+                    videos.append(video.copy())
+            except Exception:
+                pass
+        return videos
+
+    #获取mv的播放链接 参数 vid 视频id
+    def get_mv_url(self,vid):
+        baseUrl = "https://api.qq.jsososo.com/mv/url?id="+vid
+        header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36'}
+        resp = requests.get(baseUrl,headers=header)
+        urls =[]
+        if(resp.status_code==200):
+            try:
+                urls = resp.json()['data'][vid]
+
+            except Exception:
+                pass
+        return MVideo(self.source,vid,'',urls,'').__dict__.copy()

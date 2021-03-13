@@ -112,6 +112,7 @@ $(function(){
                 '<span class="list-icon icon-play" data-function="play" title="点击播放这首歌"></span>' +
                 '<span class="list-icon icon-download" data-function="download" title="点击下载这首歌"></span>' +
                 '<span class="list-icon icon-share" data-function="share" title="点击分享这首歌"></span>' +
+               
             '</div>';
             target.html(html);
             $(this).data("loadmenu", true);
@@ -180,33 +181,8 @@ $(function(){
             cancel: function(){
             }
         });
-
-        // layer.prompt(
-        // {
-        //     title: '请输入您的网易云 UID',
-        //     // value: '',  // 默认值
-        //     btn: ['确定', '取消', '帮助'],
-        //     btn3: function(index, layero){
-        //         layer.open({
-        //             title: '如何获取您的网易云UID？'
-        //             ,shade: 0.6 //遮罩透明度
-        //             ,anim: 0 //0-6的动画形式，-1不开启
-        //             ,content: 
-        //             '1、首先<a href="http://music.163.com/" target="_blank">点我(http://music.163.com/)</a>打开网易云音乐官网<br>' +
-        //             '2、然后点击页面右上角的“登录”，登录您的账号<br>' + 
-        //             '3、点击您的头像，进入个人中心<br>' + 
-        //             '4、此时<span style="color:red">浏览器地址栏</span> <span style="color: green">/user/home?id=</span> 后面的<span style="color:red">数字</span>就是您的网易云 UID'
-        //         });  
-        //     }
-        // },
-        // function(val, index){   // 输入后的回调函数
-        //     if(isNaN(val)) {
-        //         layer.msg('uid 只能是数字',{anim: 6});
-        //         return false;
-        //     }
-        //     layer.close(index);     // 关闭输入框
-        //     ajaxUserList('qqmusic',val);
-        // });
+        //修改弹出框样式
+        changeLayerStyle();
     });
 
     
@@ -235,9 +211,48 @@ $(function(){
             cancel: function(){
             }
         });
+
+        changeLayerStyle();
+    });
+
+    //点击专辑图片播放mv
+    $('#img-hover').on("click",function(){
+        
+        if(rem.vurl == null || rem.vurl =='' ||rem.vurl == undefined){
+            layer.msg('此音频无相关视频');
+        }else{
+            if(rem.paused === false) pause();
+            if(rem.vurl.match('https:')){   //https协议则开启iframe
+                layer.open({
+                    type: 2,
+                    title: false,
+                    shade: 0.5,
+                    maxmin: true,
+                    area : ['80vw' , 'calc(80vw / 1.8)'],
+                    closeBtn: 0,
+                    shadeClose: true,
+                    content: rem.vurl
+                  });
+            }else{  //非https协议使用video标签
+                var html = '<video src="'+rem.vurl+'" controls="controls" autoplay height="100%" width="100%" ></video>'
+                layer.open({
+                    type: 1,
+                    title: false,
+                    shade: 0.5,
+                    maxmin: true,
+                    area : ['80vw' , 'calc(80vw / 1.8)'],
+                    skin: 'layui-layer-rim',
+                    closeBtn: 0,
+                    shadeClose: true,
+                    content: html
+                  });
+            }
+            
+        }
+        
     });
     
-   
+    
 
     // 刷新用户列表
     $("#sheet").on("click",".login-refresh", function() {
@@ -437,10 +452,17 @@ function searchBox() {
         cancel: function(){
         }
     });
-    
+    changeLayerStyle();
     // 恢复上一次的输入
     $("#search-wd").focus().val(rem.wd);
     $("#music-source input[name='source'][value='" + rem.source + "']").prop("checked", "checked");
+}
+
+//修改弹出框样式
+function changeLayerStyle(){
+    $('[type=page]').css({'padding':'4px 0','border-radius': '10px','border': '1px solid #eaeaea',
+    'opacity':'1','-webkit-transition': 'opacity .4s','transition': 'opacity .4s',
+    'background': 'hsla(0,0%,100%,.4)','font-size': '12px','color': '#fff'});
 }
 
 // 搜索提交
@@ -1032,3 +1054,4 @@ function playerReaddata(key) {
     key = 'mkPlayer2_' + key;
     return JSON.parse(localStorage.getItem(key));
 }
+

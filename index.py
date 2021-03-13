@@ -9,6 +9,7 @@
 
 import json
 import spiders as api
+from spiders.QQMusic import QQMusic
 
 def main_handler(event, context):
     # query = event('queryStringParameters')
@@ -27,11 +28,11 @@ def main_handler(event, context):
     qqm = api.QQMusic()
 
     #设置qq音乐cookie，没有cookie输入qq同步歌单功能无法使用
-    qqm.set_cookie('')
+    #不设置cookie时，默认使用网络采集的cookie
+    qqm.set_cookie('pgv_pvi=8608630784; RK=UKpl0yStED; ptcz=fbb88170fafd2ed95d5d3b653c7f180d5d916823e72e04a44454e12fc0772bb7; tvfe_boss_uuid=41ec9918a7abd703; eas_sid=T1q5E9j7O1B5K7i5O1b9U8f162; ied_qq=o0975322731; pac_uid=1_975322731; iip=0; _ga=GA1.2.984015091.1601553199; ts_uid=7486175980; pgv_pvid=5602168404; fqm_pvqid=955e6bfd-c610-4384-b3c0-0afef3ae4b61; pgv_info=ssid=s257455772; userAction=1; _qpsvr_localtk=0.8074091033690896; euin=NKSkoi-A7io5; tmeLoginType=2; ts_refer=www.google.com/; yqq_stat=0; ts_last=y.qq.com/portal/profile.html; psrf_qqaccess_token=BD8A28A11DF77AD5905C5428ADF9F8C3; psrf_qqunionid=; qm_keyst=Q_H_L_2m0WA160eaxm3LzECdv3z_BX0Zt3qVJRER9gaSMYSvK6Tyfxge0_8pRSj-xYah8; psrf_qqrefresh_token=E8EAB1E0F4135D94809D75593B5F0333; qqmusic_key=Q_H_L_2m0WA160eaxm3LzECdv3z_BX0Zt3qVJRER9gaSMYSvK6Tyfxge0_8pRSj-xYah8; uin=975322731; psrf_access_token_expiresAt=1623271180; psrf_musickey_createtime=1615495180; psrf_qqopenid=E9376778794A0D6CB151A392F60AB3A2')
     
     #src为请求必填参数
     if('src' in query):
-        
         if(query['src'] == 'bilibili'): #请求资源为bilibili
             return do_query(bili, query)
         elif (query['src'] == 'youtube'):   #请求资源为youtube
@@ -60,38 +61,50 @@ def read_statics(key):
 #根据请求参数，对指定平台进行操作， 参数platform_obj 平台的一个对象，query 请求参数字典
 def do_query(platform_obj, query):
     resp = Response()
-    #关键词搜索
-    if('kw' in query):
-        kw=query['kw']
-        musics = platform_obj.search_keyword(kw)
-        return resp.json(musics)
+    if('type' in query):
 
-    #通过id获取音乐信息，比如播放链接，封面等
-    elif('id' in query):
-        music = platform_obj.get_music(query['id'])
-        return resp.json(music)
+        #关键词搜索
+        if('kw' in query and query['type'] =='search'):
+            kw=query['kw']
+            musics = platform_obj.search_keyword(kw)
+            return resp.json(musics)
 
-    #获取一个平台推荐歌单
-    elif ('rc' in query):
-        musics = platform_obj.get_recommendation()
-        return resp.json(musics)
-    
-    #根据歌单id获取歌单信息
-    elif('gd' in query):
-        playlist =  platform_obj.get_playlist(query['gd'])
-        return resp.json(playlist)
-    
-    elif('lrc' in query):
-        lyric = platform_obj.get_lyric(query['lrc'])
-        return resp.json(lyric)
-    
-    elif('uid' in query):
-        userlist = platform_obj.get_userlist(query['uid'])
-        return resp.json(userlist)
+        #通过id获取音乐信息，比如播放链接，封面等
+        elif('id' in query and query['type'] =='minfo'):
+            music = platform_obj.get_music(query['id'])
+            return resp.json(music)
+
+        #获取一个平台推荐歌单
+        elif ('rc' in query and query['type'] =='recom'):
+            musics = platform_obj.get_recommendation()
+            return resp.json(musics)
+        
+        #根据歌单id获取歌单信息
+        elif('gd' in query and query['type'] =='playlist'):
+            playlist =  platform_obj.get_playlist(query['gd'])
+            return resp.json(playlist)
+        
+        #获取歌词
+        elif('lrc' in query and query['type'] =='lyric'):
+            lyric = platform_obj.get_lyric(query['lrc'])
+            return resp.json(lyric)
+        
+        #获取用户列表
+        elif('uid' in query and query['type'] =='userlist'):
+            userlist = platform_obj.get_userlist(query['uid'])
+            return resp.json(userlist)
+        
+        elif(query['type'] == 'vinfo' and 'songid' in query):
+            videos = platform_obj.get_mv_info(query['songid'])
+            return resp.json(videos)
+        
+        elif(query['type'] == 'vurl' and 'vid' in query):
+            mvideo = platform_obj.get_mv_url(query['vid'])
+            return resp.json(mvideo)
 
     #上述参数未被包含，返回错误响应
     else:
-        return resp.error("暂无此功能")
+        return resp.error("type未标记")
 
 #响应类，返回一个http响应格式字典
 class Response:
@@ -117,7 +130,7 @@ class Response:
         return {
             "isBase64Encoded": False,
             "statusCode": 200,
-            "headers": {'Content-Type': 'application/json'},
+            "headers": {'Content-Type': 'application/json','Access-Control-Allow-Origin':'*'},
             "body": json.dumps(jsonObj)
         }
 

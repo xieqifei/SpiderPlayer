@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <meta name="renderer" content="webkit">
+    <meta name="author" content="mengkun">
+    <meta name="generator" content="KodCloud">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    
+    <!-- 强制移动设备以app模式打开页面(即在移动设备下全屏，仅支持部分浏览器) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="full-screen" content="yes"><!--UC强制全屏-->
+    <meta name="browsermode" content="application"><!--UC应用模式-->
+    <meta name="x5-fullscreen" content="true"><!--QQ强制全屏-->
+    <meta name="x5-page-mode" content="app"><!--QQ应用模式-->
+    
+    <title>SpiderPlayer</title>
+    <meta name="description" content="基于爬虫的音乐播放器，前端界面继承于MKOnlinePlayer"/>
+    <meta name="keywords" content="Youtube,Bilibili,SpiderPlayer"/>
+    
+    <!-- 不支持IE8及以下版本浏览器 -->
+    <!--[if lte IE 8]>
+        <script>window.location.href="plugns/killie/"</script>
+    <![endif]--> 
+    
+    <!-- favicon图标 -->
+    <link rel="shortcut icon" href="https://qn.xieqifei.com/spiderplayer/favicon.ico">
+    
+    <!-- jQuery文件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js" integrity="sha512-ju6u+4bPX50JQmgU97YOGAXmRMrD9as4LE05PdC3qycsGQmjGlfm041azyB1VfCXpkpt1i9gqXCT6XuxhBJtKg==" crossorigin="anonymous"></script>
+   
+    <!-- 样式文件替换 -->
+    <!-- <style type="text/css">
+        ${/css/player.css}
+    </style>
+    <style type="text/css">
+        ${/css/small.css}
+    </style>
+    <style type="text/css">
+        ${/css/jquery.mCustomScrollbar.min.css}
+    </style> -->
+    <!-- <style type="text/css" id="layuicss-skinlayercss">
+        ${/plugns/layer/skin/default/layer.css}
+    </style>  -->
+
+    <!-- 播放器样式表文件 -->
+    <link rel="stylesheet" type="text/css" href="cdn/css/player.css">
+    
+    <!-- 小屏幕样式修复 -->
+    <link rel="stylesheet" type="text/css" href="cdn/css/small.css">
+    
+    <!-- 滚动条美化样式文件 -->
+    <link rel="stylesheet" type="text/css" href="cdn/css/jquery.mCustomScrollbar.min.css"> 
+    
+    <!-- layer弹窗插件样式文件 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layer/3.1.1/theme/default/layer.min.css" integrity="sha512-MRvpqi3H2uzeJIhG6xTMWWZFUPNEeE3S6w4K5mxhuy3L8+0Qpdyp+pZ1RJxY2JM0ak1O1/D0yHztj8TymnlRDA==" crossorigin="anonymous" id="layuicss-skinlayercss"/>
+    <!-- <link rel="stylesheet" href="https://qn.xieqifei.com/spiderplayer/plugns/layer/skin/default/layer.css" id="layuicss-skinlayercss"> -->
+
+</head>
+<body>
+
+<div id="blur-img"></div>
+<!-- 优化纯白图片的虚化背景过亮 -->
+<div id="content-mask"></div>
+<!-- 头部logo -->
+<div class="header">
+    <div class="logo" title="Version:2.0; Based on MKOnlineMusicPlayer;Powered by QF">
+        ♫ SpiderPlayer
+    </div>
+</div>  <!--class="header"-->
+
+<!-- 中间主体区域 -->
+<div class="center">
+    <div class="container">
+        <div class="btn-bar">
+            <!-- tab按钮区 -->
+            <div class="btn-box" id="btn-area">
+                <span class="btn" data-action="player" hidden>播放器</span>
+                <span class="btn" data-action="playing" title="正在播放列表">正在播放</span>
+                <span class="btn" data-action="sheet" title="音乐播放列表">播放列表</span>
+                <span class="btn" data-action="search" title="点击搜索音乐">歌曲搜索</span>
+            </div>
+        </div>  <!--class="btn-bar"-->
+        
+        <div class="data-area">
+            <!--歌曲歌单-->
+            <div id="sheet" class="data-box" hidden></div>
+            
+            <!--音乐播放列表-->
+            <div id="main-list" class="music-list data-box"></div>
+        </div>  <!--class="data-area"-->
+        
+        <!-- 右侧封面及歌词展示 -->
+        <div class="player" id="player">
+            <!--歌曲封面-->
+            <div class="cover">
+                <img id='img-hover' src='data:image/png;base64,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'>
+                <img src="data:image/png;base64,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" class="music-cover" id="music-cover" title='播放MV'>
+                
+            </div>
+            <!--滚动歌词-->
+            <div class="lyric">
+                <ul id="lyric"></ul>
+            </div>
+            <div id="music-info" title="点击查看歌曲信息"></div>
+        </div>
+    </div>  <!--class="container"-->
+</div>  <!--class="center"-->
+
+<!-- 播放器底部区域 -->
+<div class="footer">
+    <div class="container">
+        <div class="con-btn">
+            <a href="javascript:;" class="player-btn btn-prev" title="上一首"></a>
+            <a href="javascript:;" class="player-btn btn-play" title="暂停/继续"></a>
+            <a href="javascript:;" class="player-btn btn-next" title="下一首"></a>
+			<a href="javascript:;" class="player-btn btn-order" title="循环控制"></a>
+        </div>  <!--class="con-btn"-->
+        
+        <div class="vol">
+            <div class="quiet">
+                <a href="javascript:;" class="player-btn btn-quiet" title="静音"></a>
+            </div>
+            <div class="volume">
+                <div class="volume-box">  
+                    <div id="volume-progress" class="mkpgb-area"></div>
+                </div>
+            </div>
+        </div>  <!--class="footer"-->
+        
+        <div class="progress">
+            <div class="progress-box">  
+                <div id="music-progress" class="mkpgb-area"></div>
+            </div>
+        </div>  <!--class="progress"-->
+    </div>  <!--class="container"-->
+</div>  <!--class="footer"-->
+
+
+
+<!-- layer弹窗插件 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/layer/3.1.1/layer.min.js" integrity="sha512-0YosS8GSyQIZd2uWWNHG95QgN8kPN6WBmjjzakoTRfdCt0YCmJs2HHiiF6tmGwngN/fZ+JH93zFSkW2cv5uGWw==" crossorigin="anonymous"></script>
+
+<!-- 播放器数据加载模块 -->
+<script src="cdn/js/ajax.js"></script>
+
+<!-- 播放器歌词解析模块 -->
+<script src="cdn/js/lyric.js"></script>
+
+<!-- 音乐列表配置 -->
+<script src="cdn/js/musicList.js"></script>
+
+<!-- 封装函数及ui交互模块 -->
+<script src="cdn/js/functions.js"></script>
+
+<!-- 播放器主体功能模块 -->
+<script src="cdn/js/player.js"></script>
+
+<!-- 滚动条美化插件 -->
+<script src="cdn/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+<!-- 背景模糊化插件 -->
+<script src="cdn/js/background-blur.min.js"></script>
+
+<script>
+    // $(document).ready(()=>{
+        
+    // });
+</script>
+<!-- js代码替换 -->
+<!-- <script>${/plugns/layer/layer.js}</script> -->
+<!-- <script>${/js/ajax.js}</script>
+<script>${/js/lyric.js}</script>
+<script>${/js/musicList.js}</script>
+<script>${/js/functions.js}</script>
+<script>${/js/player.js}</script>
+<script>${/js/jquery.mCustomScrollbar.concat.min.js}</script>
+<script>${/js/background-blur.min.js}</script> -->
+
+<!-- 站长统计代码 -->
+<span style="display: none">
+    <!-- 各类统计代码都放在这里…… -->
+    
+</span>
+
+</body>
+</html>

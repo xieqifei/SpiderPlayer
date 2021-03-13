@@ -6,7 +6,7 @@ SpiderPlayer
 
 ![image-20210309235105178](https://i.loli.net/2021/03/10/IB8psHLQERTmjeo.png)
 
-demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spiderplayer
+demo：https://y.sci.ci
 
 曲库：Python爬虫爬取B站和Youtube资源。
 
@@ -21,6 +21,8 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 3. QQ音乐图片http改为https
 4. 修复qq音乐歌单音乐播放时图片不显示问题
 5. 支持同步qq歌单
+6. 修改弹窗样式
+7. 支持点击专辑图片播放MV，QQ音乐MV如果主站是https协议，因浏览器限制，无法播放http协议的MV。
 
 ### v2.0
 
@@ -32,7 +34,7 @@ demo：https://service-qz679lns-1258461674.hk.apigw.tencentcs.com/release/spider
 6. 支持添加bilibili播放列表到歌单
 7. 修复由于base64图片本地缓存导致浏览器容量超标
 
-### v1.1
+### v1.1(功能已废弃)
 
 1. 支持在youtube播放列表之前加入自己的域名来构造搜索
 

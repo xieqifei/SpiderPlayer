@@ -18,7 +18,7 @@ function ajaxSearch() {
     
     $.ajax({
         type: mkPlayer.method, 
-        url: mkPlayer.api + "?kw=" + rem.wd+"&src="+rem.source, 
+        url: mkPlayer.api + "?kw=" + rem.wd+"&src="+rem.source+"&type=search", 
         dataType : "json",
         complete: function(XMLHttpRequest, textStatus) {
             if(tmpLoading) layer.close(tmpLoading);    // 关闭加载中动画
@@ -64,7 +64,8 @@ function ajaxSearch() {
                     pic_id: null,  // 封面ID
                     lyric_id: jsonData[i].id,  // 歌词ID
                     pic: jsonData[i].cover,    // 专辑图片
-                    url: null   // mp3链接
+                    url: null,   // mp3链接
+                    songid: jsonData[i].songid?jsonData[i].songid:null
                 };
                 musicList[0].item.push(tempItem);   // 保存到搜索结果临时列表中
                 addItem(no, tempItem.name, tempItem.artist, tempItem.album);  // 在前端显示
@@ -110,7 +111,7 @@ function ajaxUrl(music, callback)
     
     $.ajax({ 
         type: mkPlayer.method, 
-        url: mkPlayer.api + "?id=" + music.id+"&src="+music.source,
+        url: mkPlayer.api + "?id=" + music.id+"&src="+music.source+"&type=minfo",
         dataType : "json",
         success: function(jsonData){
             // 调试信息输出
@@ -214,7 +215,7 @@ function ajaxPlayList(lid, id, callback) {
     
     $.ajax({
         type: mkPlayer.method, 
-        url: mkPlayer.api+"?src="+musicList[id].source+"&gd="+lid, 
+        url: mkPlayer.api+"?src="+musicList[id].source+"&gd="+lid+"&type=playlist", 
         // data: "types=playlist&id=" + lid,
         dataType : "json",
         complete: function(XMLHttpRequest, textStatus) {
@@ -251,7 +252,8 @@ function ajaxPlayList(lid, id, callback) {
                         pic_id: null,  // 封面ID
                         lyric_id: jsonData.items[i].id,  // 歌词ID
                         pic: jsonData.items[i].cover,    // 专辑图片
-                        url: null   // mp3链接
+                        url: null,   // mp3链接
+                        songid:jsonData.items[i].songid //歌曲id
                     };
                 }
             }
@@ -309,7 +311,7 @@ function ajaxLyric(music, callback) {
     
     $.ajax({
         type: mkPlayer.method,
-        url: mkPlayer.api+"?lrc="+music.lyric_id+"&src="+music.source,
+        url: mkPlayer.api+"?lrc="+music.lyric_id+"&src="+music.source+"&type=lyric",
         dataType : "json",
         success: function(jsonData){
             // 调试信息输出
@@ -339,7 +341,7 @@ function ajaxUserList(src,uid)
     var tmpLoading = layer.msg('加载中...', {icon: 16,shade: 0.01});
     $.ajax({
         type: mkPlayer.method,
-        url: mkPlayer.api+"?uid="+uid+"&src="+src,
+        url: mkPlayer.api+"?uid="+uid+"&src="+src+"&type=userlist",
         dataType : "json",
         complete: function(XMLHttpRequest, textStatus) {
             if(tmpLoading) layer.close(tmpLoading);    // 关闭加载中动画
@@ -396,4 +398,61 @@ function ajaxUserList(src,uid)
         }   // error
     });//ajax
     return true;
+}
+
+//获取歌曲mv信息
+function ajaxVideoInfo(music,callback){
+    if(music.vurl !=null &&music.vurl!=undefined &&music.vurl != ''){
+        callback(music);
+        return true;
+    }
+
+    //没有qq音乐的songid返回false
+    if(music.songid == undefined){
+        return false;
+    }
+
+    $.ajax({
+        type:mkPlayer.method,
+        url:mkPlayer.api+"?songid="+music.songid+"&src="+music.source+"&type=vinfo",
+        dataType:'json',
+        success:function(jsonData){
+            if(jsonData == undefined) return false;
+            if(jsonData.length == 0) return false;
+            music.vid = jsonData[0].vid;
+            callback(music);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            layer.msg('Mvideo信息获取失败 - ' + XMLHttpRequest.status);
+            console.error(XMLHttpRequest + textStatus + errorThrown);
+        }   // error
+    });
+}
+
+//获取mv播放链接
+function ajaxVideoUrl(music,callback){
+
+    if(music.vid == undefined || music.vid == null ||music.vid ==''){
+        return false;
+    }
+
+    if(music.vurl !=null &&music.vurl!=undefined &&music.vurl != ''){
+        callback(music);
+        return true;
+    }
+
+    $.ajax({
+        type:mkPlayer.method,
+        url:mkPlayer.api+"?vid="+music.vid+"&src="+music.source+"&type=vurl",
+        dataType:'json',
+        success:function(jsonData){
+            if(jsonData == undefined) return false;
+            music.vurl = jsonData.urls[jsonData.urls.length-1];
+            callback(music);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            layer.msg('Mvideourl获取失败 - ' + XMLHttpRequest.status);
+            console.error(XMLHttpRequest + textStatus + errorThrown);
+        }   // error
+    });
 }

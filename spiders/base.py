@@ -31,3 +31,13 @@ class Userlist:
         self.creatername = creatername
         self.creatercover = creatercover
         self.playlist = playlist
+
+class MVideo:
+    def __init__(self, source,vid,name,urls,cover,**kv) -> None:
+        self.source = source
+        self.vid = vid
+        self.name = name
+        self.urls = urls
+        self.cover = cover
+        for k,v in kv.items():
+            setattr(self,k,v)

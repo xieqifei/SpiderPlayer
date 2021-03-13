@@ -335,8 +335,39 @@ function play(music) {
     changeCover(music);    // 更新封面展示
     ajaxLyric(music, lyricCallback);     // ajax加载歌词
     music_bar.lock(false);  // 取消进度条锁定
+
+    //获取mvUrl
+    rem.vurl='' //清空mvurl缓存
+    setVurl(music);
+    
 }
 
+//设置mv的链接
+function setVurl(music){
+    switch(music.source){
+        case 'youtube':
+            rem.vurl = 'https://www.youtube.com/embed/'+music.id;
+            break;
+        case 'bilibili':
+            if (music.id.length == 12){
+                rem.vurl = 'https://player.bilibili.com/player.html?aid=76053337&bvid='+music.id+'&cid=130096191&page=1&high_quality=1&danmaku=0&as_wide=1'
+            }else{
+                rem.vurl = 'https://player.bilibili.com/player.html?aid=76053337&bvid='+music.id.substring(0,12)+'&cid=130096191&page=1&high_quality=1&danmaku=0&as_wide=1&page='+music.id.substring(12,music.id.length)
+            }
+            break;
+        case 'qqmusic':
+            ajaxVideoInfo(music,mvCallback);
+            break;
+        default:
+            ;
+    }
+}
+//将获取到的mvurl放到全局vurl变量中
+function mvCallback(music){
+    ajaxVideoUrl(music,(m)=>{
+        rem.vurl = m.vurl;
+    });
+}
 
 // 我的要求并不高，保留这一句版权信息可好？
 // 保留了，你不会损失什么；而保留版权，是对作者最大的尊重。
