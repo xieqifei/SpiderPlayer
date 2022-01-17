@@ -100,11 +100,11 @@ demo：https://y.sci.ci
 
 打开index.html搜索SpiderPlayer。一共两处，修改为你喜欢的名称就可以了。
 
-### 2.3.1 首页播放列表和歌单
+### 2.3.2 首页播放列表和歌单
 
 修改和说明都在`/cdn/js/musicList.js`中
 
-### 2.3.2 同步qq歌单
+### 2.3.3 同步qq歌单
 
 qq歌单同步需要修改qq音乐的cookie。
 
