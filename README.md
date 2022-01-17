@@ -13,7 +13,7 @@ demo：https://y.sci.ci
 前端：基于MKOnlineMusicPlayer。
 
 
-※如果你想发展或学习本项目，请浏览->[开发者文件](https://github.com/xieqifei/SpiderPlayer/Developer_Readme.md)
+※如果你想发展或学习本项目，请浏览->[开发者文件](https://github.com/xieqifei/SpiderPlayer/blob/main/Developer_Readme.md)
 
 
 
