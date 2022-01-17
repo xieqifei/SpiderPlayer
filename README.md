@@ -8,56 +8,10 @@ SpiderPlayer
 
 demo：https://y.sci.ci
 
-曲库：Python爬虫爬取B站和Youtube资源。
+曲库：Python爬虫爬取B站、Youtube和qq音乐资源。
 
 前端：基于MKOnlineMusicPlayer。
 
-## 更新：
-
-### v2.1
-
-1. 添加QQ音乐支持
-2. 支持添加QQ音乐歌单
-3. QQ音乐图片http改为https
-4. 修复qq音乐歌单音乐播放时图片不显示问题
-5. 支持同步qq歌单
-6. 修改弹窗样式
-7. 支持点击专辑图片播放MV，QQ音乐MV如果主站是https协议，因浏览器限制，无法播放http协议的MV。
-
-### v2.0
-
-1. 在MKOnlineMusicPlayer的UI基础上更新功能
-2. 修复白色背景虚化后，文字不清晰问题
-3. 支持添加youtube播放列表到歌单
-4. 保存新添加的歌单到本地
-5. 图片转base64，js、css静态资源替换到html代码中
-6. 支持添加bilibili播放列表到歌单
-7. 修复由于base64图片本地缓存导致浏览器容量超标
-
-### v1.1(功能已废弃)
-
-1. 支持在youtube播放列表之前加入自己的域名来构造搜索
-
-> 例：`https://www.youtube.com/playlist?list=PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa`
->
-> 加入自己的播放器url，构造链接为：
->
-> `https://y.sci.ci/https://www.youtube.com/playlist?list=PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa`
->
-> 直接返回播放列表搜索结果
-
-2. 修改搜索结果中btn样式
-3. 支持点击歌曲名播放
-4. 支持下载歌曲
-
-### v1.0
-
-1. 支持B站和Youtube资源
-4. 支持添加歌曲到收藏，收藏上限受浏览器限制，在几十首内
-5. 支持一键全部播放
-4. 支持选中操作
-5. 支持退出重进后，自动加载上次的播放列表
-6. 支持搜索Youtube播放列表id和播放列表链接
 
 
 # 2：部署说明
@@ -168,17 +122,27 @@ qq歌单同步需要修改qq音乐的cookie。
 
 # 3：开发说明
 
+## 3.1 爬虫文件以及添加新曲库
+`\spiders`目录下存放了不同音乐平台的爬虫。
+1. Youtube：使用了开源pyfa库获取音频链接，音乐的图片标题id等信息直接从youtube网页中提取。若出现youtube的音乐源无法播放，尝试更新pyfa和youtube-dl库，出现音乐信息不全，尝试修改spiders/Youtube.py中的爬虫程序。音乐需翻墙后才能播放。
+2. Bilibili：所有的音乐信息包括音频链接均通过爬虫从网页中获取。
+3. QQMusci：音乐资料和音频链接来自第三方接口。
+
+如果添加新的曲库，可参照这三个类重写，并在index.py中注册新的api。同时`cdn/js/functions.js`中查找`searchBox()`在前端页面中添加新的搜索源显示。
+tips: 如果音乐的封面图片由于跨域原因无法显示，可在后端转为base64格式替代图片url发送给前端。
+
+## 3.2 Api调用
 云函数的入口函数是`index.py`，前端调用的api都在这个py文件里。
 
-如果你想为你的安卓或者桌面应用安装后端api，在项目目录里，有一个名为[back-api.py](https://github.com/xieqifei/SpiderPlayer/blob/main/back-api.py)的python文件，你可以将它部署到你的云函数上，通过api调用，返回推荐列表、搜索结果列表和音乐信息。如果函数入口是`index.py`文件，当没有参数或者参数错误时，会返回html文本，而`back-api.py`没有html返回。
+
 
 - ⭐所有请求必填参数`src=bilibili`或者`src=youtube`
 
-- 参数为`rc=1`时，返回bilibili推荐列表
+- 参数为`rc=1`并且`type=recom`时，返回bilibili推荐列表
 
 api请求示例：
 
-> https://y.sci.ci/?src=bilibili&rc=1
+> https://y.sci.ci/?src=bilibili&rc=1&type=recom
 
 返回一个json列表
 
@@ -208,11 +172,11 @@ api请求示例：
 >
 > albumname：专辑名称
 
-- 参数为`kw=搜索关键词`，返回搜索结果
+- 参数为`kw=搜索关键词`并且`type=search`，返回搜索结果
 
 api请求示例：
 
-> [https://y.sci.ci/?src=bilibili&kw=明天你好](https://y.sci.ci/?src=bilibili&kw=%E6%98%8E%E5%A4%A9%E4%BD%A0%E5%A5%BD)
+> [https://y.sci.ci/?src=bilibili&kw=明天你好&type=search](https://y.sci.ci/?src=bilibili&kw=%E6%98%8E%E5%A4%A9%E4%BD%A0%E5%A5%BD&type=search)
 
 返回一个json列表：
 
@@ -222,13 +186,13 @@ api请求示例：
 
 > 参数说明同上
 
-- 参数为`id=视频id`时，返回该视频对应的音频播放链接。
+- 参数为`id=视频id`并且`type=minfo`时，返回该视频对应的音频播放链接和音乐信息。
 
-视频id必须和id来源一一对应。bilibili的id和youtube id不能混用。
+视频id必须和id来源一一对应。
 
 api请求示例：
 
-> https://y.sci.ci/?src=bilibili&id=BV1hX4y1N7b1
+> https://y.sci.ci/?src=bilibili&id=BV1hX4y1N7b1&type=minfo
 
 返回一个json字典：
 
@@ -240,11 +204,11 @@ api请求示例：
 >
 > cover：音乐封面，图片如果有防盗链，会返回一个base64编码的字符串，可直接放入img标签src展示。
 
-- 参数为`gd=歌单id`时，返回歌单
+- 参数为`gd=歌单id`并且`type=playlist`时，返回歌单信息
 
 api示例：
 
-> http://y.sci.ci/?src=qqmusic&gd=7586058175
+> http://y.sci.ci/?src=qqmusic&gd=7586058175&type=playlist
 
 返回json字典
 
@@ -254,11 +218,11 @@ api示例：
 
 > items：一个列表，每个元素都是一个歌曲信息的字典。
 
-- 参数`lrc=歌曲id`，返回歌词
+- 参数`lrc=歌曲id`并且`type=lyric`，返回歌词
 
 api示例：
 
-> http://y.sci.ci/?src=qqmusic&lyc=001xfrlS0fYS3z
+> http://y.sci.ci/?src=qqmusic&lyc=001xfrlS0fYS3z&type=lyric
 
 返回json字典
 
@@ -266,11 +230,11 @@ api示例：
 {"source": "qqmusic", "id": "001xfrlS0fYS3z", "lyric": "[ti:Victory]\n[ar:Two Steps From Hell/Thomas Bergersen]\n[al:Battlecry]\n[by:]\n[offset:0]\n[00:00.00]Victory - Two Steps From Hell (\u4e24\u6b65\u9003\u79bb\u5730\u72f1)/Thomas Bergersen\n[01:20.65]\n[02:41.30]From far away\n[02:43.30]In mountains deep\n[02:45.22]The night of blood\n[02:47.23]In twilight sleep\n[02:49.22]The armies fight\n[02:51.23]For king and queen\n[02:53.24]There will be no\n[02:55.24]No victory\n[02:57.21]The swords collide\n[02:59.30]With power and force\n[03:01.27]As mighty men\n[03:03.26]Show no remorse\n[03:05.26]It is the time\n[03:07.30]The snow is melting\n[03:09.29]It is the time\n[03:11.31]Of reckoning\n[04:17.23]From far away\n[04:19.30]In mountains deep\n[04:21.22]The night of blood\n[04:23.19]In twilight sleep\n[04:25.17]The armies fight\n[04:27.21]For king and queen\n[04:29.21]There will be no\n[04:31.23]No victory\n[04:33.20]The swords collide\n[04:35.27]With power and force\n[04:37.22]As mighty men\n[04:39.25]Show no remorse\n[04:41.21]It is the time\n[04:43.33]The snow is melting\n[04:45.27]It is the time\n[04:47.17]Of reckoning"}
 ```
 
-- 参数`uid=用户id`，返回此用户下的歌单信息
+- 参数`uid=用户id`并且`type=userlist`，返回此用户下的歌单信息
 
 api示例：
 
-> http://y.sci.ci/?src=qqmusic&uid=975322731
+> http://y.sci.ci/?src=qqmusic&uid=975322731&type=userlist
 
 返回用户歌单json字典
 
@@ -283,6 +247,9 @@ api示例：
 > uid：用户id，比如qq号
 >
 > playlist：一个列表，其中每个元素是一个歌单，歌单字典的格式，见参数为gd时的请求结果说明
+- 参数为`songid=音乐id`并且`type=vinfo`，返回音乐的mv信息
+
+- 参数为`vid=视频id`并且`type=vurl`，返回MV的播放地址
 
 - 参数错误，或者无参数
 
@@ -295,6 +262,55 @@ api示例：
 - 其他说明
 
 当设置来源为YouTube时，返回的音乐播放链接需要翻墙才能播放。
+## 更新：
+
+### v2.1
+
+1. 添加QQ音乐支持
+2. 支持添加QQ音乐歌单
+3. QQ音乐图片http改为https
+4. 修复qq音乐歌单音乐播放时图片不显示问题
+5. 支持同步qq歌单
+6. 修改弹窗样式
+7. 支持点击专辑图片播放MV。
+8. 修复mv链接为http协议时主站无法嵌入播放问题
+9. 优化专辑图片提醒有MV的体验
+
+### v2.0
+
+1. 在MKOnlineMusicPlayer的UI基础上更新功能
+2. 修复白色背景虚化后，文字不清晰问题
+3. 支持添加youtube播放列表到歌单
+4. 保存新添加的歌单到本地
+5. 图片转base64，js、css静态资源替换到html代码中
+6. 支持添加bilibili播放列表到歌单
+7. 修复由于base64图片本地缓存导致浏览器容量超标
+
+### v1.1(功能已废弃)
+
+1. 支持在youtube播放列表之前加入自己的域名来构造搜索
+
+> 例：`https://www.youtube.com/playlist?list=PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa`
+>
+> 加入自己的播放器url，构造链接为：
+>
+> `https://y.sci.ci/https://www.youtube.com/playlist?list=PLP4YsIi6aT_Le7Lgzs_JzRRC4LD2OugHa`
+>
+> 直接返回播放列表搜索结果
+
+2. 修改搜索结果中btn样式
+3. 支持点击歌曲名播放
+4. 支持下载歌曲
+
+### v1.0
+
+1. 支持B站和Youtube资源
+4. 支持添加歌曲到收藏，收藏上限受浏览器限制，在几十首内
+5. 支持一键全部播放
+4. 支持选中操作
+5. 支持退出重进后，自动加载上次的播放列表
+6. 支持搜索Youtube播放列表id和播放列表链接
+
 
 # 4：TODO
 

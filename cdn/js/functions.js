@@ -3,6 +3,8 @@
  * 封装函数及UI交互模块
  * 编写：mengkun(https://mkblog.cn)
  * 时间：2018-3-11
+ * 修改：Qifei
+ * 修改时间：2021-3-13
  *************************************************/
 // 判断是否是移动设备
 var isMobile = {  
@@ -222,7 +224,7 @@ $(function(){
             layer.msg('此音频无相关视频');
         }else{
             if(rem.paused === false) pause();
-            if(rem.vurl.match('https:')){   //https协议则开启iframe
+            if(rem.vurl.match('https:')||location.protocol.match("http:")){   //视频是https协议
                 layer.open({
                     type: 2,
                     title: false,
@@ -233,23 +235,21 @@ $(function(){
                     shadeClose: true,
                     content: rem.vurl
                   });
-            }else{  //非https协议使用video标签
-                var html = '<video src="'+rem.vurl+'" controls="controls" autoplay height="100%" width="100%" ></video>'
-                layer.open({
-                    type: 1,
-                    title: false,
-                    shade: 0.5,
-                    maxmin: true,
-                    area : ['80vw' , 'calc(80vw / 1.8)'],
-                    skin: 'layui-layer-rim',
-                    closeBtn: 0,
-                    shadeClose: true,
-                    content: html
-                  });
+            }else{  //视频是http，而主机是https或者其他情况，受浏览器同源限制，只能在新窗口打开不安全链接
+                window.open(rem.vurl);
             }
-            
+             
         }
         
+    });
+
+    //如果有MV，悬浮在专辑上时，应当有视频播放提示
+    $('#img-hover').hover(()=>{ //鼠标悬浮在专辑图片上时
+        if(rem.vurl!=null&& rem.vurl!='' && rem.vurl !=undefined){
+            $('#img-hover').css('opacity','1');
+        }
+    },()=>{ //鼠标移出
+        $('#img-hover').css('opacity','0');
     });
     
     

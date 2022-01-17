@@ -318,7 +318,7 @@ Filesystem Options:
     --rm-cache-dir                       Delete all filesystem cache files
 
 
-Thumbnail images:
+Thumbnail Options:
 
     --write-thumbnail                    Write thumbnail image to disk
     --write-all-thumbnails               Write all thumbnail image formats to
@@ -1175,7 +1175,7 @@ the executable, run make youtube-dl.
 The exe throws an error due to missing MSVCR100.dll
 
 To run the exe you need to install first the Microsoft Visual C++ 2010
-Redistributable Package (x86).
+Service Pack 1 Redistributable Package (x86).
 
 On Windows, how should I set up ffmpeg and youtube-dl? Where should I put the exe files?
 

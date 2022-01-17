@@ -2,14 +2,15 @@ import requests
 from requests.api import head
 from .base import MVideo, Music,Playlist,Userlist
 import json
+import re
 
 class QQMusic:
 
     cookie = ''
     source = 'qqmusic'
 
-    def __init__(self) -> None:
-        self.cookie = self.get_cookie()
+    # def __init__(self) -> None:
+    #      self.cookie = self.get_cookie()
     
     #官方的请求地址，香港以及海外服务器无法请求
     # def get_music(self,id):
@@ -181,8 +182,11 @@ class QQMusic:
         urls =[]
         if(resp.status_code==200):
             try:
-                urls = resp.json()['data'][vid]
-
+                for url in resp.json()['data'][vid]:
+                    tempUrl = re.sub(r'^(.*)mv.music.tc.qq.com','https://mv.music.tc.qq.com',url)
+                    tempUrl = re.sub(r'^http:','https:',tempUrl)
+                    urls.append(tempUrl)
+                # urls = resp.json()['data'][vid]
             except Exception:
                 pass
         return MVideo(self.source,vid,'',urls,'').__dict__.copy()

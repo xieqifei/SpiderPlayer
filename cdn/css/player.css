@@ -546,9 +546,7 @@ body {
     position: absolute;
     opacity: 0;
 }
-#img-hover:hover{
-    opacity: 1;
-}
+
 /* 歌词显示区域 */
 .lyric {
     position: absolute;
