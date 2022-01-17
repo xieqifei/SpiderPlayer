@@ -92,7 +92,7 @@ demo：https://y.sci.ci
 
 ## 2.3 自定义
 
-### 2.3.1 自定义默认歌单
+### 2.3.1 自定义首页歌单
 
 修改和说明都在`/cdn/js/musicList.js`中
 
@@ -113,6 +113,7 @@ qq歌单同步需要修改qq音乐的cookie。
 - 复制红色字体部分，不包含红色字体外的双引号。
 - 将复制的cookie粘贴到`index.py`中`qqm.set_cookie('')`部分。
 - 保存后重新上传到云函数
+- cookie有效期比较短，不建议设置。
 
 2. 同步歌单
 
@@ -230,7 +231,7 @@ api示例：
 {"source": "qqmusic", "id": "001xfrlS0fYS3z", "lyric": "[ti:Victory]\n[ar:Two Steps From Hell/Thomas Bergersen]\n[al:Battlecry]\n[by:]\n[offset:0]\n[00:00.00]Victory - Two Steps From Hell (\u4e24\u6b65\u9003\u79bb\u5730\u72f1)/Thomas Bergersen\n[01:20.65]\n[02:41.30]From far away\n[02:43.30]In mountains deep\n[02:45.22]The night of blood\n[02:47.23]In twilight sleep\n[02:49.22]The armies fight\n[02:51.23]For king and queen\n[02:53.24]There will be no\n[02:55.24]No victory\n[02:57.21]The swords collide\n[02:59.30]With power and force\n[03:01.27]As mighty men\n[03:03.26]Show no remorse\n[03:05.26]It is the time\n[03:07.30]The snow is melting\n[03:09.29]It is the time\n[03:11.31]Of reckoning\n[04:17.23]From far away\n[04:19.30]In mountains deep\n[04:21.22]The night of blood\n[04:23.19]In twilight sleep\n[04:25.17]The armies fight\n[04:27.21]For king and queen\n[04:29.21]There will be no\n[04:31.23]No victory\n[04:33.20]The swords collide\n[04:35.27]With power and force\n[04:37.22]As mighty men\n[04:39.25]Show no remorse\n[04:41.21]It is the time\n[04:43.33]The snow is melting\n[04:45.27]It is the time\n[04:47.17]Of reckoning"}
 ```
 
-- 参数`uid=用户id`并且`type=userlist`，返回此用户下的歌单信息
+- 参数`uid=用户id`并且`type=userlist`，返回此用户下的歌单信息。需要设置qq音乐的cookie，并且只支持qq音乐
 
 api示例：
 
